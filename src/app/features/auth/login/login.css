@@ -1,0 +1,48 @@
+/* Animações suaves para os elementos do formulário */
+.login-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efeitos de foco melhorados */
+input:focus {
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+/* Animação do spinner de loading */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Efeito glass morphism no cartão */
+.glass-card {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hover effects personalizados */
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+}
+
+/* Transições suaves para todos os elementos interativos */
+* {
+  transition: all 0.2s ease-in-out;
+}
