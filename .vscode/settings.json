@@ -5,4 +5,11 @@
     "source.organizeImports": "always"
   },
   "files.eol": "\n",
+  "chat.mcp.serverSampling": {
+    "ptl-ui/.vscode/mcp.json: angular-cli": {
+      "allowedModels": [
+        "copilot/gpt-5-mini"
+      ]
+    }
+  },
 }

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Definição de temas usando a nova diretiva @theme */
 :root {
@@ -16,7 +16,9 @@
 html {
   background-color: var(--color-surface);
   color: var(--color-text);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Modo dark */
