@@ -1,0 +1,86 @@
+<aside [class]="sidebarClass()">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <div class="sidebar-toggle">
+      <button class="toggle-btn" (click)="toggleSidebar()" type="button"
+        [attr.aria-label]="isCollapsed() ? 'Expandir menu' : 'Recolher menu'">
+        @if (isCollapsed()) {
+        <lucide-icon [img]="Menu" size="20"></lucide-icon>
+        } @else {
+        <lucide-icon [img]="X" size="20"></lucide-icon>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      @for (item of navigationItems(); track item.id) {
+      <li class="nav-item" [class.has-children]="item.children">
+        @if (item.children) {
+        <!-- Parent item with children -->
+        <button class="nav-link expandable" (click)="toggleMenuItem(item.id)" [class.expanded]="isItemExpanded(item.id)"
+          type="button">
+          <div class="nav-link-content">
+            <lucide-icon [img]="item.icon" size="20" class="nav-icon"></lucide-icon>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            }
+            @if (item.badge && !isCollapsed()) {
+            <span class="nav-badge">{{ item.badge }}</span>
+            }
+          </div>
+          @if (!isCollapsed()) {
+          <lucide-icon [img]="ChevronDown" size="16" class="expand-icon"></lucide-icon>
+          }
+        </button>
+
+        <!-- Submenu -->
+        @if (isItemExpanded(item.id) && !isCollapsed()) {
+        <ul class="submenu">
+          @for (child of item.children; track child.id) {
+          <li class="submenu-item">
+            <a class="submenu-link" [routerLink]="child.route" routerLinkActive="active">
+              <lucide-icon [img]="child.icon" size="16" class="submenu-icon"></lucide-icon>
+              <span class="submenu-label">{{ child.label }}</span>
+            </a>
+          </li>
+          }
+        </ul>
+        }
+        } @else {
+        <!-- Regular navigation item -->
+        <a class="nav-link" [routerLink]="item.route" routerLinkActive="active"
+          [title]="isCollapsed() ? item.label : ''">
+          <div class="nav-link-content">
+            <lucide-icon [img]="item.icon" size="20" class="nav-icon"></lucide-icon>
+            @if (!isCollapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            }
+            @if (item.badge && !isCollapsed()) {
+            <span class="nav-badge">{{ item.badge }}</span>
+            }
+          </div>
+        </a>
+        }
+      </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer">
+    @if (!isCollapsed()) {
+    <div class="footer-content">
+      <p class="footer-text">PTL Dashboard</p>
+      <p class="footer-version">v1.0.0</p>
+    </div>
+    }
+  </div>
+</aside>
+
+<!-- Sidebar overlay for mobile -->
+@if (!isCollapsed()) {
+<div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+}

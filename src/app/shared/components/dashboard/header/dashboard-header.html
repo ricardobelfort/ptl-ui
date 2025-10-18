@@ -1,0 +1,61 @@
+<header class="dashboard-header">
+  <div class="header-container">
+    <!-- Left side - Logo/Brand -->
+    <div class="header-left">
+      <div class="logo">
+        <h1 class="logo-text">PTL</h1>
+      </div>
+    </div>
+
+    <!-- Center - Search (optional) -->
+    <div class="header-center">
+      <!-- Space for search bar or breadcrumbs if needed -->
+    </div>
+
+    <!-- Right side - User menu -->
+    <div class="header-right">
+      <div class="user-menu" [class.open]="isMenuOpen()">
+        <button class="user-avatar-btn" (click)="toggleUserMenu()" type="button" aria-label="User menu">
+          <div class="user-avatar">
+            @if (user()?.avatar) {
+            <img [src]="user()!.avatar" [alt]="user()!.name" class="avatar-image">
+            } @else {
+            <div class="avatar-initials">
+              {{ user()?.name?.charAt(0) || 'U' }}
+            </div>
+            }
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user()?.name || 'Usuário' }}</span>
+            <span class="user-role">{{ user()?.role || 'user' }}</span>
+          </div>
+          <lucide-icon [img]="ChevronDown" class="dropdown-icon"></lucide-icon>
+        </button>
+
+        <!-- Dropdown menu -->
+        @if (isMenuOpen()) {
+        <div class="user-dropdown">
+          <button class="dropdown-item" (click)="onProfile()">
+            <lucide-icon [img]="User" size="16"></lucide-icon>
+            Perfil
+          </button>
+          <button class="dropdown-item" (click)="onSettings()">
+            <lucide-icon [img]="Settings" size="16"></lucide-icon>
+            Configurações
+          </button>
+          <hr class="dropdown-divider">
+          <button class="dropdown-item logout" (click)="onLogout()">
+            <lucide-icon [img]="LogOut" size="16"></lucide-icon>
+            Sair
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay to close menu when clicking outside -->
+  @if (isMenuOpen()) {
+  <div class="menu-overlay" (click)="isMenuOpen.set(false)"></div>
+  }
+</header>

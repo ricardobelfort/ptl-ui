@@ -4,7 +4,7 @@ import { Login } from './features/auth/login/login';
 import { Home } from './features/home/home';
 import { Form } from './features/internos/form/form';
 import { List } from './features/internos/list/list';
-import { MainLayout } from './layout/main-layout/main-layout';
+import { DashboardLayout } from './shared/components/dashboard/layout/dashboard-layout';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -15,12 +15,13 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: MainLayout,
+    component: DashboardLayout,
     canActivate: [authGuard],
     children: [
       { path: 'home', component: Home },
-      { path: 'internos', component: List },
-      { path: 'internos/cadastro', component: Form },
+      { path: 'internos', redirectTo: 'internos/list', pathMatch: 'full' },
+      { path: 'internos/list', component: List },
+      { path: 'internos/form', component: Form },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

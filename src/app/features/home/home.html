@@ -1,1 +1,133 @@
-<p>home works!</p>
+<div class="home-dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-header">
+      <h1 class="welcome-title">{{ greeting() }}</h1>
+      <p class="welcome-subtitle">Bem-vindo ao sistema PTL Dashboard</p>
+    </div>
+    <div class="welcome-time">
+      <span class="current-time">{{ currentTime() }}</span>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon primary">
+        <lucide-icon [img]="Users" size="24"></lucide-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">156</h3>
+        <p class="stat-label">Total de Internos</p>
+        <span class="stat-change positive">+12 este mês</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon success">
+        <lucide-icon [img]="Activity" size="24"></lucide-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">89</h3>
+        <p class="stat-label">Ativos</p>
+        <span class="stat-change positive">+5 esta semana</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon warning">
+        <lucide-icon [img]="Clock" size="24"></lucide-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">23</h3>
+        <p class="stat-label">Pendências</p>
+        <span class="stat-change neutral">3 urgentes</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon info">
+        <lucide-icon [img]="TrendingUp" size="24"></lucide-icon>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">94%</h3>
+        <p class="stat-label">Taxa de Ocupação</p>
+        <span class="stat-change positive">+2% vs mês anterior</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2 class="section-title">Ações Rápidas</h2>
+    <div class="actions-grid">
+      <button class="action-card" type="button">
+        <div class="action-icon">
+          <lucide-icon [img]="UserPlus" size="24"></lucide-icon>
+        </div>
+        <h3 class="action-title">Novo Interno</h3>
+        <p class="action-description">Cadastrar novo interno no sistema</p>
+      </button>
+
+      <button class="action-card" type="button">
+        <div class="action-icon">
+          <lucide-icon [img]="BarChart3" size="24"></lucide-icon>
+        </div>
+        <h3 class="action-title">Relatórios</h3>
+        <p class="action-description">Gerar relatórios detalhados</p>
+      </button>
+
+      <button class="action-card" type="button">
+        <div class="action-icon">
+          <lucide-icon [img]="Settings" size="24"></lucide-icon>
+        </div>
+        <h3 class="action-title">Editar Dados</h3>
+        <p class="action-description">Atualizar informações dos internos</p>
+      </button>
+
+      <button class="action-card" type="button">
+        <div class="action-icon">
+          <lucide-icon [img]="Settings" size="24"></lucide-icon>
+        </div>
+        <h3 class="action-title">Configurações</h3>
+        <p class="action-description">Ajustar configurações do sistema</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="recent-activity">
+    <h2 class="section-title">Atividades Recentes</h2>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon">
+          <lucide-icon [img]="UserPlus" size="16"></lucide-icon>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Novo interno <strong>João Silva</strong> foi cadastrado</p>
+          <span class="activity-time">Há 2 horas</span>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon">
+          <lucide-icon [img]="BarChart3" size="16"></lucide-icon>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Relatório mensal foi gerado</p>
+          <span class="activity-time">Há 4 horas</span>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon">
+          <lucide-icon [img]="Settings" size="16"></lucide-icon>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">Dados de <strong>Maria Santos</strong> foram atualizados</p>
+          <span class="activity-time">Ontem</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

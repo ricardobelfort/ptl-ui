@@ -1,6 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  LucideAngularModule,
+  Shield,
+  User
+} from 'lucide-angular';
 import { ApiError, LoginRequest } from '../../../core/interfaces/auth.interface';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -9,11 +20,21 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
 })
 export class Login {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+
+  // Lucide icons
+  protected readonly Lock = Lock;
+  protected readonly User = User;
+  protected readonly Eye = Eye;
+  protected readonly EyeOff = EyeOff;
+  protected readonly Shield = Shield;
+  protected readonly AlertCircle = AlertCircle;
+  protected readonly CheckCircle = CheckCircle;
+  protected readonly Loader2 = Loader2;
 
   protected readonly isLoading = signal(false);
   protected readonly showPassword = signal(false);
