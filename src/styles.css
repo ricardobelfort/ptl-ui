@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+/* Definição de temas usando a nova diretiva @theme */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+
+  --color-surface: #ffffff;
+  --color-surface-dark: #0f172a;
+  --color-text: #1e293b;
+  --color-text-dark: #f8fafc;
+}
+
+/* Estilos base */
+html {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modo dark */
+html.dark {
+  background-color: var(--color-surface-dark);
+  color: var(--color-text-dark);
+}
