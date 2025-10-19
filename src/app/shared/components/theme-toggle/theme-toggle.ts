@@ -72,7 +72,7 @@ import { ThemeService } from '../../../core/services/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LucideAngularModule]
 })
-export class ThemeToggle {
+export class ThemeToggleComponent {
   private readonly themeService = inject(ThemeService);
 
   // Ícones

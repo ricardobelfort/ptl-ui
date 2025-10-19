@@ -3,12 +3,12 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router } from '@angular/router';
 import { LogOut, LucideAngularModule, Settings, User } from 'lucide-angular';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ThemeToggle } from '../../theme-toggle/theme-toggle';
+import { ThemeToggleComponent } from '../../theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-dashboard-header',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, ThemeToggle],
+  imports: [CommonModule, LucideAngularModule, ThemeToggleComponent],
   templateUrl: './dashboard-header.html',
   styleUrls: ['./dashboard-header.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -130,13 +130,9 @@
 
   <!-- Loading -->
   @if (isLoading()) {
-  <div class="loading-container">
-    <lucide-icon [img]="RefreshCw" class="loading-icon animate-spin"></lucide-icon>
-    <p>Carregando logs...</p>
-  </div>
-  }
-
-  <!-- Logs Table -->
+  <app-loading type="refresh" size="lg" message="Carregando logs..." [fullscreen]="true">
+  </app-loading>
+  } <!-- Logs Table -->
   @if (!isLoading() && logs().length > 0) {
   <div class="table-container">
     <table class="logs-table">

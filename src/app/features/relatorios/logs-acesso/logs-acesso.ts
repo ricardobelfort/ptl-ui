@@ -22,11 +22,12 @@ import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ExportService } from '../../../core/services/export.service';
 import { AccessLog, LogsFilters, LogsResponse, LogsService } from '../../../core/services/logs.service';
+import { LoadingComponent } from '../../../shared/components/loading';
 
 @Component({
   selector: 'app-logs-acesso',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, DatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, DatePipe, LoadingComponent],
   templateUrl: './logs-acesso.html',
   styleUrls: ['./logs-acesso.css']
 })

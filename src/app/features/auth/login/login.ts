@@ -13,13 +13,14 @@ import {
 } from 'lucide-angular';
 import { ApiError, LoginRequest } from '../../../core/interfaces/auth.interface';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoadingComponent } from '../../../shared/components';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [ReactiveFormsModule, LucideAngularModule, LoadingComponent],
 })
 export class Login {
   private readonly router = inject(Router);

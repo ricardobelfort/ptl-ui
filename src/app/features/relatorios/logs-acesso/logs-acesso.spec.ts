@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ExportService } from '../../../core/services/export.service';
 import { LogsService } from '../../../core/services/logs.service';
+import { LoadingComponent } from '../../../shared/components';
 import { LogsAcessoComponent } from './logs-acesso';
 
 describe('LogsAcessoComponent', () => {
@@ -94,7 +95,8 @@ describe('LogsAcessoComponent', () => {
       imports: [
         LogsAcessoComponent,
         ReactiveFormsModule,
-        LucideAngularModule
+        LucideAngularModule,
+        LoadingComponent
       ],
       providers: [
         FormBuilder,
