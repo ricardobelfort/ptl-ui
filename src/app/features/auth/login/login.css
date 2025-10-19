@@ -5,10 +5,10 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, 
-    rgb(var(--primary)) 0%, 
-    rgb(var(--primary-light)) 50%, 
-    rgb(var(--accent)) 100%);
+  background: linear-gradient(135deg,
+      rgb(var(--primary)) 0%,
+      rgb(var(--primary-light)) 50%,
+      rgb(var(--accent)) 100%);
   padding: 1rem;
 }
 
@@ -88,7 +88,7 @@
   .login-container {
     padding: 0.5rem;
   }
-  
+
   .login-form-container {
     padding: 1.5rem;
     border-radius: 1rem;
@@ -98,4 +98,40 @@
 /* Dark mode optimizations */
 .dark .login-form-container {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Checkbox styling fixes */
+.p-checkbox {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.p-checkbox .p-checkbox-box {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.25rem;
+  background: white;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.p-checkbox:not(.p-disabled):hover .p-checkbox-box {
+  border-color: #3b82f6;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box .p-checkbox-icon {
+  color: white;
+}
+
+/* Ensure checkbox label is clickable */
+label[for="rememberMe"] {
+  cursor: pointer;
+  user-select: none;
 }

@@ -54,9 +54,12 @@
         </div>
 
         <!-- Lembrar-me -->
-        <div class="flex items-center">
-          <p-checkbox formControlName="rememberMe" inputId="rememberMe" />
-          <label for="rememberMe" class="ml-2"> Lembrar-me </label>
+        <div class="flex items-center space-x-2">
+          <p-checkbox formControlName="rememberMe" inputId="rememberMe" [binary]="true"
+            (onChange)="onRememberMeChange($event)" />
+          <label for="rememberMe" class="text-sm font-medium text-gray-700 cursor-pointer select-none">
+            Lembrar-me
+          </label>
         </div>
 
         <!-- Mensagem de Erro -->

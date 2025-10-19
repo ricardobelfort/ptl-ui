@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   AlertCircle,
@@ -26,7 +27,9 @@ import { LoadingComponent } from '../../../shared/components';
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     LucideAngularModule,
     LoadingComponent,
     InputTextModule,
@@ -56,8 +59,22 @@ export class Login {
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    rememberMe: new FormControl(false),
+    rememberMe: new FormControl<boolean>(false),
   });
+
+  // Signal para o valor do checkbox
+  protected readonly rememberMeValue = signal<boolean>(false);
+
+  // Model para two-way binding do checkbox
+  protected rememberMeModel = false;
+
+  constructor() {
+    // Subscribe to changes in the rememberMe form control
+    this.loginForm.get('rememberMe')?.valueChanges.subscribe(value => {
+      this.rememberMeValue.set(value || false);
+      this.rememberMeModel = value || false;
+    });
+  }
 
   protected onSubmit(): void {
     if (this.loginForm.valid) {
@@ -99,5 +116,17 @@ export class Login {
   protected onRegister(): void {
     // TODO: Implementar navegação para registro
     console.log('Register clicked');
+  }
+
+  protected onRememberMeChange(event: any): void {
+    // Sync all checkbox states
+    const newValue = event?.checked || false;
+    this.rememberMeModel = newValue;
+    this.rememberMeValue.set(newValue);
+
+    // Force form control update if needed
+    if (this.loginForm.get('rememberMe')?.value !== newValue) {
+      this.loginForm.get('rememberMe')?.setValue(newValue);
+    }
   }
 }
