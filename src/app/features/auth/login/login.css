@@ -8,6 +8,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -19,12 +20,23 @@ input:focus {
   box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
 }
 
-/* Animação do spinner de loading */
-@keyframes spin {
-  from {
+/* Spinner CSS puro - sem dependências externas */
+.css-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin-smooth 1s linear infinite;
+}
+
+@keyframes spin-smooth {
+  0% {
     transform: rotate(0deg);
   }
-  to {
+
+  100% {
     transform: rotate(360deg);
   }
 }
@@ -42,7 +54,16 @@ input:focus {
   box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
 }
 
-/* Transições suaves para todos os elementos interativos */
-* {
+/* Transições suaves para elementos específicos */
+input {
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+button {
   transition: all 0.2s ease-in-out;
+}
+
+/* Garantir que spinner não seja afetado por outras transições */
+.css-spinner {
+  transition: none !important;
 }

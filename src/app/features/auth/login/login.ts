@@ -6,7 +6,6 @@ import {
   CheckCircle,
   Eye,
   EyeOff,
-  Loader2,
   Lock,
   LucideAngularModule,
   Shield,
@@ -34,7 +33,6 @@ export class Login {
   protected readonly Shield = Shield;
   protected readonly AlertCircle = AlertCircle;
   protected readonly CheckCircle = CheckCircle;
-  protected readonly Loader2 = Loader2;
 
   protected readonly isLoading = signal(false);
   protected readonly showPassword = signal(false);

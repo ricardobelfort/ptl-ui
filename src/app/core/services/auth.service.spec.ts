@@ -1,11 +1,10 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
 
-import { AuthService } from './auth.service';
-import { LoginRequest, LoginResponse, ApiError, User } from '../interfaces/auth.interface';
 import { environment } from '../config/environment';
+import { ApiError, LoginRequest, LoginResponse, User } from '../interfaces/auth.interface';
+import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -35,14 +34,14 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
-    
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         { provide: Router, useValue: routerSpyObj }
       ]
     });
-    
+
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
@@ -71,7 +70,7 @@ describe('AuthService', () => {
       // Arrange
       localStorage.setItem('auth_token', 'stored_token');
       localStorage.setItem('auth_user', JSON.stringify(mockUser));
-      
+
       // Act - Create new service instance that will read from localStorage
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
@@ -80,9 +79,9 @@ describe('AuthService', () => {
           { provide: Router, useValue: routerSpy }
         ]
       });
-      
+
       const newService = TestBed.inject(AuthService);
-      
+
       // Assert
       expect(newService.getToken()).toBe('stored_token');
       // Note: Actual restoration behavior depends on service implementation
@@ -94,7 +93,7 @@ describe('AuthService', () => {
       // Arrange
       spyOn(environment, 'mockApi' as any).and.returnValue(false);
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       // Act
       service.login(mockLoginRequest).subscribe(response => {
         // Assert
@@ -115,7 +114,7 @@ describe('AuthService', () => {
       // Arrange
       Object.defineProperty(environment, 'mockApi', { value: true, configurable: true });
       let responseReceived = false;
-      
+
       // Act
       service.login({
         email: 'admin@ptl.com',
@@ -131,10 +130,10 @@ describe('AuthService', () => {
 
       // Simulate async operation completion - mock API uses setTimeout(1000)
       tick(1000);
-      
+
       // Verify response was received
       expect(responseReceived).toBeTrue();
-      
+
       // No HTTP request should be made for mock
       httpMock.expectNone(`${environment.apiUrl}/auth/login`);
     }));
@@ -143,7 +142,7 @@ describe('AuthService', () => {
       // Arrange
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const errorResponse = { status: 401, statusText: 'Unauthorized' };
-      
+
       // Act & Assert
       service.login(mockLoginRequest).subscribe({
         next: () => fail('Should have failed'),
@@ -160,17 +159,17 @@ describe('AuthService', () => {
     it('should set loading state during login', () => {
       // Arrange
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       // Act
       service.login(mockLoginRequest).subscribe();
-      
+
       // Assert initial loading state
       expect(service.isLoading()).toBeTrue();
-      
+
       // Complete request
       const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
       req.flush(mockLoginResponse);
-      
+
       // Assert loading is false after completion
       expect(service.isLoading()).toBeFalse();
     });
@@ -179,13 +178,13 @@ describe('AuthService', () => {
       // Arrange
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const requestWithRemember = { ...mockLoginRequest, rememberMe: true };
-      
+
       // Act
       service.login(requestWithRemember).subscribe();
-      
+
       const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
       req.flush(mockLoginResponse);
-      
+
       // Assert
       expect(localStorage.getItem('auth_token')).toBe(mockLoginResponse.access_token);
       // Com rememberMe, o token deveria ser armazenado permanentemente
@@ -264,11 +263,11 @@ describe('AuthService', () => {
     it('should get stored token', () => {
       const token = 'stored_token';
       const user = { id: '1', email: 'test@test.com', name: 'Test User', role: 'user' };
-      
+
       // Store token and user in localStorage
       localStorage.setItem('auth_token', token);
       localStorage.setItem('auth_user', JSON.stringify(user));
-      
+
       // Create a new service instance to initialize from localStorage
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
@@ -276,10 +275,10 @@ describe('AuthService', () => {
         providers: [{ provide: Router, useValue: routerSpy }]
       });
       const newService = TestBed.inject(AuthService);
-      
+
       // Test the method - should return token from state initialized from localStorage
       expect(newService.getToken()).toBe(token);
-      
+
       // Clean up
       localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
@@ -288,7 +287,7 @@ describe('AuthService', () => {
     it('should handle missing token in localStorage', () => {
       // Ensure no token in localStorage
       localStorage.removeItem('auth_token');
-      
+
       // Create new service to test null case
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
@@ -303,10 +302,10 @@ describe('AuthService', () => {
       // Setup corrupted data
       localStorage.setItem('auth_token', 'valid_token');
       localStorage.setItem('auth_user', 'invalid_json{');
-      
+
       // Spy on console.error
       spyOn(console, 'error');
-      
+
       // Create new service to test initialization with corrupted data
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
@@ -314,23 +313,23 @@ describe('AuthService', () => {
         providers: [{ provide: Router, useValue: routerSpy }]
       });
       const newService = TestBed.inject(AuthService);
-      
+
       // Should not be authenticated due to corrupted data
       expect(newService.isAuthenticated()).toBeFalse();
       expect(console.error).toHaveBeenCalledWith(
         'Error parsing stored user data:',
         jasmine.any(SyntaxError)
       );
-      
+
       // Clean up
       localStorage.clear();
     });
 
     it('should parse expires_in correctly', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       const responseWithExpiresIn = { ...mockLoginResponse, expires_in: '7200' };
-      
+
       service.login(mockLoginRequest).subscribe(response => {
         expect(response.expires_in).toBe(7200);
       });
@@ -343,7 +342,7 @@ describe('AuthService', () => {
   describe('Error Handling', () => {
     it('should handle network errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Erro de conexão. Verifique sua internet.');
@@ -356,7 +355,7 @@ describe('AuthService', () => {
 
     it('should handle server errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Erro interno do servidor. Tente novamente mais tarde.');
@@ -369,7 +368,7 @@ describe('AuthService', () => {
 
     it('should handle 401 unauthorized errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Email ou senha incorretos.');
@@ -383,7 +382,7 @@ describe('AuthService', () => {
 
     it('should handle 403 access denied errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Acesso negado.');
@@ -397,7 +396,7 @@ describe('AuthService', () => {
 
     it('should handle 429 too many requests errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Muitas tentativas. Tente novamente em alguns minutos.');
@@ -411,7 +410,7 @@ describe('AuthService', () => {
 
     it('should handle 0 status (server unavailable) errors', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe('Servidor não disponível. Verifique se a API está rodando em http://localhost:3000');
@@ -426,7 +425,7 @@ describe('AuthService', () => {
     it('should handle unknown error codes with custom message', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const customErrorMessage = 'Custom server error message';
-      
+
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
           expect(error.message).toBe(customErrorMessage);
@@ -441,8 +440,30 @@ describe('AuthService', () => {
   });
 
   describe('Logout', () => {
+    it('should logout successfully (local only)', () => {
+      // Arrange - set up authenticated state
+      localStorage.setItem('auth_token', 'test_token');
+      localStorage.setItem('auth_user', JSON.stringify(mockUser));
+
+      // Act
+      service.logout().subscribe({
+        next: () => {
+          expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+          expect(localStorage.getItem('auth_token')).toBeNull();
+          expect(localStorage.getItem('auth_user')).toBeNull();
+        }
+      });
+
+      // Should not make HTTP request for logout
+      httpMock.expectNone(`${environment.apiUrl}/auth/logout`);
+    });
+
     it('should logout without token (local only)', () => {
       // Arrange - ensure no token in state
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+
+      // Act
       service.logout().subscribe({
         next: () => {
           expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
@@ -452,32 +473,12 @@ describe('AuthService', () => {
       // Should not make HTTP request when no token
       httpMock.expectNone(`${environment.apiUrl}/auth/logout`);
     });
-
-    it('should handle logout HTTP error but still clear local data', () => {
-      // Arrange - set up authenticated state
-      service.login(mockLoginRequest).subscribe();
-      let req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
-      req.flush(mockLoginResponse);
-
-      // Act - logout with server error
-      service.logout().subscribe({
-        error: (error) => {
-          expect(error).toBeTruthy();
-          // Even with error, should clear local data and navigate
-          expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
-          expect(service.isAuthenticated()).toBeFalse();
-        }
-      });
-
-      req = httpMock.expectOne(`${environment.apiUrl}/auth/logout`);
-      req.flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
-    });
   });
 
   describe('Refresh Token', () => {
     it('should handle missing refresh token', () => {
       localStorage.removeItem('refresh_token');
-      
+
       service.refreshToken().subscribe({
         error: (error) => {
           expect(error.message).toBe('No refresh token available');
@@ -489,7 +490,7 @@ describe('AuthService', () => {
 
     it('should handle refresh token error and clear auth data', () => {
       localStorage.setItem('refresh_token', 'invalid_refresh_token');
-      
+
       service.refreshToken().subscribe({
         error: (error) => {
           expect(error).toBeTruthy();
@@ -506,11 +507,11 @@ describe('AuthService', () => {
   describe('Role Management', () => {
     beforeEach(() => {
       // Setup user with role
-      const userWithRole = { 
-        id: '1', 
-        email: 'admin@test.com', 
-        name: 'Admin User', 
-        role: 'admin' 
+      const userWithRole = {
+        id: '1',
+        email: 'admin@test.com',
+        name: 'Admin User',
+        role: 'admin'
       };
       service['updateAuthState']({
         isAuthenticated: true,
@@ -529,10 +530,10 @@ describe('AuthService', () => {
     });
 
     it('should return false when user has no role', () => {
-      const userWithoutRole = { 
-        id: '1', 
-        email: 'user@test.com', 
-        name: 'Regular User', 
+      const userWithoutRole = {
+        id: '1',
+        email: 'user@test.com',
+        name: 'Regular User',
         role: undefined as any
       };
       service['updateAuthState']({

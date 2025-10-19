@@ -144,34 +144,17 @@ export class AuthService {
   }
 
   /**
-   * Realiza logout do usuário
+   * Realiza logout do usuário (apenas local - sem chamada para API)
    */
   logout(): Observable<void> {
-    const token = this._authState().token;
+    // Logout é sempre local - limpa os dados e redireciona
+    this.clearAuthData();
+    this.router.navigate(['/login']);
 
-    // Se não há token, apenas limpa o estado local
-    if (!token) {
-      this.clearAuthData();
-      this.router.navigate(['/login']);
-      return new Observable(subscriber => {
-        subscriber.next();
-        subscriber.complete();
-      });
-    }
-
-    return this.http.post<void>(`${this.apiUrl}/auth/logout`, {}).pipe(
-      tap(() => {
-        this.clearAuthData();
-        this.router.navigate(['/login']);
-      }),
-      catchError((error) => {
-        console.error('Logout error:', error);
-        // Mesmo com erro, limpa os dados locais
-        this.clearAuthData();
-        this.router.navigate(['/login']);
-        return throwError(() => error);
-      })
-    );
+    return new Observable(subscriber => {
+      subscriber.next();
+      subscriber.complete();
+    });
   }
 
   /**
