@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Clock,
   Download,
+  FileText,
   Filter,
   LucideAngularModule,
   Monitor,
@@ -19,6 +20,7 @@ import {
 } from 'lucide-angular';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
+import { ExportService } from '../../../core/services/export.service';
 import { AccessLog, LogsFilters, LogsResponse, LogsService } from '../../../core/services/logs.service';
 
 @Component({
@@ -33,6 +35,7 @@ export class LogsAcessoComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly exportService = inject(ExportService);
 
   // Lucide Icons
   protected readonly Activity = Activity;
@@ -41,6 +44,7 @@ export class LogsAcessoComponent implements OnInit {
   protected readonly ChevronRight = ChevronRight;
   protected readonly Clock = Clock;
   protected readonly Download = Download;
+  protected readonly FileText = FileText;
   protected readonly Filter = Filter;
   protected readonly Monitor = Monitor;
   protected readonly RefreshCw = RefreshCw;
@@ -63,6 +67,7 @@ export class LogsAcessoComponent implements OnInit {
 
   // Filtros
   protected readonly showFilters = signal(false);
+  protected readonly showExportMenu = signal(false);
   protected readonly filtersForm: FormGroup;
 
   // Computed
@@ -92,11 +97,29 @@ export class LogsAcessoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Verificar se o usuário é admin
+    // Verificar se é admin
     if (!this.isAdmin()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/dashboard']);
       return;
     }
+
+    // Configurar observação de mudanças no formulário
+    this.filtersForm.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.applyFilters();
+    });
+
+    // Fechar menu de exportação ao clicar fora
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const exportDropdown = document.querySelector('.export-dropdown');
+
+      if (exportDropdown && !exportDropdown.contains(target)) {
+        this.showExportMenu.set(false);
+      }
+    });
 
     this.loadLogs();
   }
@@ -182,26 +205,74 @@ export class LogsAcessoComponent implements OnInit {
   }
 
   /**
-   * Exporta os logs para CSV
+   * Alterna visibilidade do menu de exportação
    */
-  protected exportLogs(): void {
-    const filters = this.filtersForm.value;
-    this.logsService.exportLogs(filters).subscribe({
-      next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `logs-acesso-${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      },
-      error: (err) => {
-        console.error('Erro ao exportar logs:', err);
-        this.error.set('Erro ao exportar logs. Tente novamente.');
-      }
-    });
+  protected toggleExportMenu(): void {
+    this.showExportMenu.update(show => !show);
+  }
+
+  /**
+   * Exporta os logs para Excel
+   */
+  protected async exportToExcel(): Promise<void> {
+    try {
+      const exportData = {
+        filename: `logs-acesso-${new Date().toISOString().split('T')[0]}`,
+        title: 'Relatório de Logs de Acesso',
+        subtitle: `Gerado em ${new Date().toLocaleDateString('pt-BR')}`,
+        columns: [
+          { key: 'timestamp', header: 'Data/Hora', formatter: this.exportService.formatters.dateTime },
+          { key: 'email', header: 'Email' },
+          { key: 'nome', header: 'Nome' },
+          { key: 'perfil', header: 'Perfil' },
+          { key: 'method', header: 'Método' },
+          { key: 'path', header: 'Endpoint' },
+          { key: 'statusCode', header: 'Status', formatter: this.exportService.formatters.status },
+          { key: 'success', header: 'Sucesso', formatter: this.exportService.formatters.boolean },
+          { key: 'responseTime', header: 'Tempo (ms)' },
+          { key: 'ip', header: 'IP' },
+          { key: 'userAgent', header: 'User Agent' }
+        ],
+        data: this.logs()
+      };
+
+      await this.exportService.exportToExcel(exportData);
+      this.showExportMenu.set(false);
+    } catch (error) {
+      console.error('Erro ao exportar para Excel:', error);
+      this.error.set('Erro ao exportar logs para Excel. Tente novamente.');
+    }
+  }
+
+  /**
+   * Exporta os logs para PDF
+   */
+  protected async exportToPDF(): Promise<void> {
+    try {
+      const exportData = {
+        filename: `logs-acesso-${new Date().toISOString().split('T')[0]}`,
+        title: 'Relatório de Logs de Acesso',
+        subtitle: `Gerado em ${new Date().toLocaleDateString('pt-BR')} - Total: ${this.logs().length} registros`,
+        columns: [
+          { key: 'timestamp', header: 'Data/Hora', formatter: this.exportService.formatters.dateTime, width: 35 },
+          { key: 'email', header: 'Email', width: 40 },
+          { key: 'perfil', header: 'Perfil', width: 20 },
+          { key: 'method', header: 'Método', width: 15 },
+          { key: 'path', header: 'Endpoint', width: 40 },
+          { key: 'statusCode', header: 'Status', width: 15 },
+          { key: 'success', header: 'Sucesso', formatter: this.exportService.formatters.boolean, width: 15 },
+          { key: 'responseTime', header: 'Tempo (ms)', width: 20 },
+          { key: 'ip', header: 'IP', width: 25 }
+        ],
+        data: this.logs()
+      };
+
+      await this.exportService.exportToPDF(exportData);
+      this.showExportMenu.set(false);
+    } catch (error) {
+      console.error('Erro ao exportar para PDF:', error);
+      this.error.set('Erro ao exportar logs para PDF. Tente novamente.');
+    }
   }
 
   /**

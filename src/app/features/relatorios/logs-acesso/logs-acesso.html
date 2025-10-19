@@ -20,10 +20,25 @@
         Atualizar
       </button>
 
-      <button type="button" class="btn btn-primary" (click)="exportLogs()">
-        <lucide-icon [img]="Download"></lucide-icon>
-        Exportar
-      </button>
+      <div class="export-dropdown" [class.active]="showExportMenu()">
+        <button type="button" class="btn btn-primary" (click)="toggleExportMenu()">
+          <lucide-icon [img]="Download"></lucide-icon>
+          Exportar
+        </button>
+
+        @if (showExportMenu()) {
+        <div class="export-menu">
+          <button type="button" class="export-option" (click)="exportToExcel()">
+            <lucide-icon [img]="FileText" size="16"></lucide-icon>
+            <span>Excel (CSV)</span>
+          </button>
+          <button type="button" class="export-option" (click)="exportToPDF()">
+            <lucide-icon [img]="Download" size="16"></lucide-icon>
+            <span>PDF</span>
+          </button>
+        </div>
+        }
+      </div>
     </div>
   </div>
 
