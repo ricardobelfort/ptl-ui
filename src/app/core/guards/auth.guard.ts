@@ -47,3 +47,26 @@ export const publicGuard: CanActivateFn = () => {
 
   return true;
 };
+
+/**
+ * Guard que protege rotas que requerem privilégios de admin
+ */
+export const adminGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  // Primeiro verifica se está autenticado
+  if (!authService.isAuthenticated()) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+  // Verifica se o usuário é admin
+  const user = authService.user();
+  if (!user || user.role !== 'admin') {
+    router.navigate(['/home']);
+    return false;
+  }
+
+  return true;
+};

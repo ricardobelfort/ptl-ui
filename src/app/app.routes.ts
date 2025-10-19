@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { authGuard, publicGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard, publicGuard } from './core/guards/auth.guard';
 import { Login } from './features/auth/login/login';
 import { Home } from './features/home/home';
 import { Form } from './features/internos/form/form';
 import { List } from './features/internos/list/list';
+import { LogsAcessoComponent } from './features/relatorios/logs-acesso/logs-acesso';
 import { DashboardLayout } from './shared/components/dashboard/layout/dashboard-layout';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
       { path: 'internos', redirectTo: 'internos/list', pathMatch: 'full' },
       { path: 'internos/list', component: List },
       { path: 'internos/form', component: Form },
+      { path: 'relatorios/logs-acesso', component: LogsAcessoComponent, canActivate: [adminGuard] },
       { path: '', redirectTo: 'home', pathMatch: 'full' },
     ],
   },

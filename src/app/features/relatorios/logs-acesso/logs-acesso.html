@@ -1,0 +1,257 @@
+<div class="logs-container">
+  <!-- Header -->
+  <div class="logs-header">
+    <div class="header-title">
+      <lucide-icon [img]="Shield" class="header-icon"></lucide-icon>
+      <div>
+        <h1>Logs de Acesso</h1>
+        <p>Monitoramento de acessos ao sistema</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" (click)="toggleFilters()" [class.active]="showFilters()">
+        <lucide-icon [img]="Filter"></lucide-icon>
+        Filtros
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="refresh()" [disabled]="isLoading()">
+        <lucide-icon [img]="RefreshCw" [class.animate-spin]="isLoading()"></lucide-icon>
+        Atualizar
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="exportLogs()">
+        <lucide-icon [img]="Download"></lucide-icon>
+        Exportar
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-container" [class.show]="showFilters()">
+    <form [formGroup]="filtersForm" class="filters-form">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label for="email">Email</label>
+          <div class="input-with-icon">
+            <lucide-icon [img]="User" class="input-icon"></lucide-icon>
+            <input type="email" id="email" formControlName="email" placeholder="Filtrar por email...">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="method">Método</label>
+          <select id="method" formControlName="method">
+            <option value="">Todos</option>
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+            <option value="PATCH">PATCH</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="statusCode">Status</label>
+          <select id="statusCode" formControlName="statusCode">
+            <option value="">Todos</option>
+            <option value="200">200 - OK</option>
+            <option value="201">201 - Created</option>
+            <option value="400">400 - Bad Request</option>
+            <option value="401">401 - Unauthorized</option>
+            <option value="403">403 - Forbidden</option>
+            <option value="404">404 - Not Found</option>
+            <option value="500">500 - Internal Error</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="success">Resultado</label>
+          <select id="success" formControlName="success">
+            <option value="">Todos</option>
+            <option value="true">Sucesso</option>
+            <option value="false">Erro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters-row">
+        <div class="filter-group">
+          <label for="path">Endpoint</label>
+          <input type="text" id="path" formControlName="path" placeholder="Ex: /api/users">
+        </div>
+
+        <div class="filter-group">
+          <label for="ip">IP Address</label>
+          <input type="text" id="ip" formControlName="ip" placeholder="Ex: 192.168.1.1">
+        </div>
+
+        <div class="filter-group">
+          <label for="startDate">Data Inicial</label>
+          <input type="datetime-local" id="startDate" formControlName="startDate">
+        </div>
+
+        <div class="filter-group">
+          <label for="endDate">Data Final</label>
+          <input type="datetime-local" id="endDate" formControlName="endDate">
+        </div>
+      </div>
+
+      <div class="filters-actions">
+        <button type="button" class="btn btn-outline btn-sm" (click)="clearFilters()">
+          Limpar Filtros
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+  <div class="error-message">
+    <lucide-icon [img]="Activity" class="error-icon"></lucide-icon>
+    <span>{{ error() }}</span>
+  </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading()) {
+  <div class="loading-container">
+    <lucide-icon [img]="RefreshCw" class="loading-icon animate-spin"></lucide-icon>
+    <p>Carregando logs...</p>
+  </div>
+  }
+
+  <!-- Logs Table -->
+  @if (!isLoading() && logs().length > 0) {
+  <div class="table-container">
+    <table class="logs-table">
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Usuário</th>
+          <th>Método</th>
+          <th>Endpoint</th>
+          <th>Status</th>
+          <th>Sucesso</th>
+          <th>Tempo</th>
+          <th>IP</th>
+          <th>User Agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of logs(); track log._id; let i = $index) {
+        <tr [style.--row-index]="i">
+          <td class="timestamp-cell">
+            <div class="timestamp">
+              {{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
+            </div>
+          </td>
+          <td class="user-cell">
+            <div class="user-info">
+              <div>
+                <div class="user-email">{{ log.email }}</div>
+                <div class="user-name">{{ log.nome }}</div>
+                <span class="user-role badge" [class]="'badge-' + log.perfil">
+                  {{ log.perfil }}
+                </span>
+              </div>
+            </div>
+          </td>
+
+          <td class="method-cell">
+            <span class="method-badge" [class]="getMethodClass(log.method)">
+              {{ log.method }}
+            </span>
+          </td>
+
+          <td class="path-cell">
+            <code>{{ log.path }}</code>
+          </td>
+
+          <td class="status-cell">
+            <span class="status-badge" [class]="getStatusClass(log.statusCode)">
+              {{ log.statusCode }}
+            </span>
+          </td>
+
+          <td class="success-cell">
+            <span class="success-badge" [class]="log.success ? 'success-yes' : 'success-no'">
+              {{ log.success ? 'Yes' : 'No' }}
+            </span>
+          </td>
+
+          <td class="time-cell">
+            <div class="response-time">
+              {{ formatResponseTime(log.responseTime) }}
+            </div>
+          </td>
+
+          <td class="ip-cell">
+            <div class="ip-info">
+              <code>{{ log.ip }}</code>
+            </div>
+          </td>
+
+          <td class="useragent-cell">
+            <span class="user-agent" [title]="log.userAgent">
+              {{ formatUserAgent(log.userAgent) }}
+            </span>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && logs().length === 0) {
+  <div class="empty-state">
+    <lucide-icon [img]="Activity" class="empty-icon"></lucide-icon>
+    <h3>Nenhum log encontrado</h3>
+    <p>Não foram encontrados logs de acesso com os filtros aplicados.</p>
+  </div>
+  }
+
+  <!-- Pagination -->
+  @if (!isLoading() && logs().length > 0) {
+  <div class="pagination-container">
+    <div class="pagination-left">
+      <span class="pagination-text">
+        showing {{ ((pagination().page - 1) * pagination().limit) + 1 }}-{{ getDisplayedRecords() }} of {{
+        pagination().total }} results
+      </span>
+    </div>
+
+    <div class="pagination-right">
+      <div class="rows-per-page">
+        <span class="pagination-text">Linhas por página:</span>
+        <select id="rowsPerPage" name="rowsPerPage" class="rows-select" [value]="pagination().limit"
+          (change)="onRowsPerPageChange($event)">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+
+      <div class="page-navigation">
+        <span class="pagination-text">Página</span>
+        <input type="number" id="currentPage" name="currentPage" class="page-input" [value]="pagination().page"
+          [min]="1" [max]="pagination().totalPages" (change)="onPageChange($event)">
+        <span class="pagination-text">de {{ pagination().totalPages }}</span>
+
+        <button type="button" class="nav-button" (click)="prevPage()" [disabled]="!pagination().hasPrevPage"
+          aria-label="Previous page">
+          <lucide-icon [img]="ChevronLeft" size="16"></lucide-icon>
+        </button>
+
+        <button type="button" class="nav-button" (click)="nextPage()" [disabled]="!pagination().hasNextPage"
+          aria-label="Next page">
+          <lucide-icon [img]="ChevronRight" size="16"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</div>
