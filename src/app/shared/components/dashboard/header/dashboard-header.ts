@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChevronDown, LogOut, LucideAngularModule, Settings, User } from 'lucide-angular';
+import { LogOut, LucideAngularModule, Settings, User } from 'lucide-angular';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeToggle } from '../../theme-toggle/theme-toggle';
 
@@ -21,7 +21,6 @@ export class DashboardHeader {
   protected readonly isMenuOpen = signal(false);
 
   // Lucide icons
-  protected readonly ChevronDown = ChevronDown;
   protected readonly User = User;
   protected readonly Settings = Settings;
   protected readonly LogOut = LogOut;

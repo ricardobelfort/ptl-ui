@@ -124,14 +124,27 @@
   line-height: 1.2;
 }
 
-.dropdown-icon {
+.dropdown-arrow {
   width: 1rem;
   height: 1rem;
-  color: rgb(var(--text-secondary));
+  position: relative;
   transition: transform 0.2s ease;
 }
 
-.user-menu.open .dropdown-icon {
+.dropdown-arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid rgb(var(--text-secondary));
+  border-bottom: 2px solid rgb(var(--text-secondary));
+  transform: translate(-50%, -65%) rotate(45deg);
+  transition: inherit;
+}
+
+.user-menu.open .dropdown-arrow {
   transform: rotate(180deg);
 }
 
