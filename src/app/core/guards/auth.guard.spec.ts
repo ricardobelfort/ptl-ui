@@ -1,11 +1,9 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { CanActivateFn } from '@angular/router';
 import { signal } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { CanActivateFn, Router } from '@angular/router';
 
-import { authGuard, publicGuard } from './auth.guard';
 import { AuthService } from '../services/auth.service';
+import { authGuard, publicGuard } from './auth.guard';
 
 describe('Auth Guards', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
@@ -26,7 +24,7 @@ describe('Auth Guards', () => {
 
     authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-    
+
     // Configurar getToken por padrão
     authServiceSpy.getToken.and.returnValue(null);
   });
@@ -45,7 +43,7 @@ describe('Auth Guards', () => {
       });
 
       // Act
-      const result = TestBed.runInInjectionContext(() => 
+      const result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
 
@@ -61,7 +59,7 @@ describe('Auth Guards', () => {
       });
 
       // Act
-      const result = TestBed.runInInjectionContext(() => 
+      const result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
 
@@ -78,7 +76,7 @@ describe('Auth Guards', () => {
       });
 
       // Act & Assert - First call (unauthenticated)
-      let result = TestBed.runInInjectionContext(() => 
+      let result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
       expect(result).toBe(false);
@@ -88,7 +86,7 @@ describe('Auth Guards', () => {
       authSignal.set(true);
 
       // Act & Assert - Second call (authenticated)
-      result = TestBed.runInInjectionContext(() => 
+      result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
       expect(result).toBe(true);
@@ -109,7 +107,7 @@ describe('Auth Guards', () => {
       });
 
       // Act
-      const result = TestBed.runInInjectionContext(() => 
+      const result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
 
@@ -125,13 +123,13 @@ describe('Auth Guards', () => {
       });
 
       // Act
-      const result = TestBed.runInInjectionContext(() => 
+      const result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
 
       // Assert
       expect(result).toBe(false);
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/app/home']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
     });
 
     it('should handle authentication state changes', () => {
@@ -142,17 +140,17 @@ describe('Auth Guards', () => {
       });
 
       // Act & Assert - First call (authenticated)
-      let result = TestBed.runInInjectionContext(() => 
+      let result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
       expect(result).toBe(false);
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/app/home']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
 
       // Change state to unauthenticated
       authSignal.set(false);
 
       // Act & Assert - Second call (unauthenticated)
-      result = TestBed.runInInjectionContext(() => 
+      result = TestBed.runInInjectionContext(() =>
         guard({} as any, {} as any)
       );
       expect(result).toBe(true);
@@ -168,10 +166,10 @@ describe('Auth Guards', () => {
       });
 
       // Act
-      const authGuardResult = TestBed.runInInjectionContext(() => 
+      const authGuardResult = TestBed.runInInjectionContext(() =>
         authGuard({} as any, {} as any)
       );
-      const publicGuardResult = TestBed.runInInjectionContext(() => 
+      const publicGuardResult = TestBed.runInInjectionContext(() =>
         publicGuard({} as any, {} as any)
       );
 
@@ -183,10 +181,10 @@ describe('Auth Guards', () => {
       authSignal.set(false);
 
       // Act again
-      const authGuardResult2 = TestBed.runInInjectionContext(() => 
+      const authGuardResult2 = TestBed.runInInjectionContext(() =>
         authGuard({} as any, {} as any)
       );
-      const publicGuardResult2 = TestBed.runInInjectionContext(() => 
+      const publicGuardResult2 = TestBed.runInInjectionContext(() =>
         publicGuard({} as any, {} as any)
       );
 
@@ -213,7 +211,7 @@ describe('Auth Guards', () => {
       });
 
       TestBed.runInInjectionContext(() => publicGuard({} as any, {} as any));
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/app/home']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
     });
   });
 
@@ -272,7 +270,7 @@ describe('Auth Guards', () => {
       };
 
       // Act
-      const result = TestBed.runInInjectionContext(() => 
+      const result = TestBed.runInInjectionContext(() =>
         authGuard(mockRoute as any, mockState as any)
       );
 

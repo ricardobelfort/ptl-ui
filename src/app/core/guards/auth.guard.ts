@@ -1,6 +1,6 @@
-import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { map, catchError, of } from 'rxjs';
+import { CanActivateFn, Router } from '@angular/router';
+import { catchError, map, of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 /**
@@ -41,7 +41,7 @@ export const publicGuard: CanActivateFn = () => {
 
   // Se já está autenticado, redireciona para home
   if (authService.isAuthenticated()) {
-    router.navigate(['/app/home']);
+    router.navigate(['/home']);
     return false;
   }
 

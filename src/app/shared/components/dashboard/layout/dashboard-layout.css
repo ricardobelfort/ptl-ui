@@ -1,6 +1,6 @@
 .dashboard-layout {
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: rgb(var(--bg-primary));
 }
 
 .main-content {
@@ -9,8 +9,8 @@
   margin-top: 64px;
   /* Header height */
   min-height: calc(100vh - 64px);
-  transition: margin-left 0.3s ease;
-  background-color: #f8fafc;
+  transition: margin-left 0.3s ease, background-color 0.2s ease;
+  background-color: rgb(var(--bg-primary));
 }
 
 .content-container {

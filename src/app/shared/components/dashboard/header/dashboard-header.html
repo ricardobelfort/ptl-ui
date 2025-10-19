@@ -12,8 +12,11 @@
       <!-- Space for search bar or breadcrumbs if needed -->
     </div>
 
-    <!-- Right side - User menu -->
+    <!-- Right side - Theme toggle and User menu -->
     <div class="header-right">
+      <!-- Theme Toggle -->
+      <app-theme-toggle></app-theme-toggle>
+
       <div class="user-menu" [class.open]="isMenuOpen()">
         <button class="user-avatar-btn" (click)="toggleUserMenu()" type="button" aria-label="User menu">
           <div class="user-avatar">
