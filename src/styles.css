@@ -6,45 +6,107 @@
 :root {
   /* Light mode colors */
   --bg-primary: 255 255 255;
-  /* white */
+  /* #FFFFFF - Fundo principal branco */
   --bg-secondary: 248 250 252;
-  /* slate-50 */
+  /* #F8FAFC - Fundo secundário */
   --bg-tertiary: 241 245 249;
-  /* slate-100 */
+  /* #F1F5F9 - Fundo terciário */
+  --bg-card: 255 255 255;
+  /* #FFFFFF - Cards e containers */
   --text-primary: 15 23 42;
-  /* slate-900 */
+  /* #0F172A - Texto principal escuro */
   --text-secondary: 71 85 105;
-  /* slate-600 */
+  /* #475569 - Texto secundário */
+  --text-tertiary: 100 116 139;
+  /* #64748B - Texto terciário */
   --text-muted: 148 163 184;
-  /* slate-400 */
+  /* #94A3B8 - Texto esmaecido */
+  --text-disabled: 203 213 225;
+  /* #CBD5E1 - Texto desabilitado */
+  --border-primary: 226 232 240;
+  /* #E2E8F0 - Bordas principais */
+  --border-secondary: 241 245 249;
+  /* #F1F5F9 - Bordas secundárias */
   --border: 226 232 240;
-  /* slate-200 */
-  --primary: 59 130 246;
-  /* blue-500 */
-  --primary-hover: 37 99 235;
-  /* blue-600 */
+  /* #E2E8F0 - Bordas padrão */
+  --primary: 139 92 246;
+  /* #8B5CF6 - Roxo violeta principal */
+  --primary-hover: 124 58 237;
+  /* #7C3AED - Roxo violeta hover */
+  --primary-light: 168 85 247;
+  /* #A855F7 - Roxo claro */
+  --accent: 236 72 153;
+  /* #EC4899 - Rosa accent */
+  --success: 34 197 94;
+  /* #22C55E - Verde sucesso */
+  --warning: 251 191 36;
+  /* #FBBF24 - Amarelo aviso */
+  --error: 239 68 68;
+  /* #EF4444 - Vermelho erro */
+  --info: 59 130 246;
+  /* #3B82F6 - Azul informação */
+  /* Variáveis específicas para inputs */
+  --input-bg: 255 255 255;
+  /* #FFFFFF - Fundo dos inputs */
+  --input-border: 226 232 240;
+  /* #E2E8F0 - Borda dos inputs */
+  --input-text: 15 23 42;
+  /* #0F172A - Texto dos inputs */
+  --input-placeholder: 148 163 184;
+  /* #94A3B8 - Placeholder */
 }
 
-/* Dark mode colors */
+/* Dark mode colors - Inspirado na interface Plan */
 .dark {
-  --bg-primary: 15 23 42;
-  /* slate-900 */
-  --bg-secondary: 30 41 59;
-  /* slate-800 */
-  --bg-tertiary: 51 65 85;
-  /* slate-700 */
-  --text-primary: 248 250 252;
-  /* slate-50 */
-  --text-secondary: 203 213 225;
-  /* slate-300 */
-  --text-muted: 148 163 184;
-  /* slate-400 */
-  --border: 51 65 85;
-  /* slate-700 */
-  --primary: 59 130 246;
-  /* blue-500 */
-  --primary-hover: 37 99 235;
-  /* blue-600 */
+  --bg-primary: 17 17 17;
+  /* #111111 - Fundo principal muito escuro */
+  --bg-secondary: 25 25 25;
+  /* #191919 - Fundo secundário */
+  --bg-tertiary: 35 35 35;
+  /* #232323 - Fundo terciário */
+  --bg-card: 30 30 30;
+  /* #1E1E1E - Cards e containers */
+  --text-primary: 255 255 255;
+  /* #FFFFFF - Texto principal branco */
+  --text-secondary: 156 163 175;
+  /* #9CA3AF - Texto secundário cinza claro */
+  --text-tertiary: 107 114 128;
+  /* #6B7280 - Texto terciário cinza médio */
+  --text-muted: 75 85 99;
+  /* #4B5563 - Texto esmaecido */
+  --text-disabled: 55 65 81;
+  /* #374151 - Texto desabilitado */
+  --border-primary: 55 55 55;
+  /* #373737 - Bordas principais */
+  --border-secondary: 45 45 45;
+  /* #2D2D2D - Bordas secundárias */
+  --border: 55 55 55;
+  /* #373737 - Bordas padrão */
+  --primary: 139 92 246;
+  /* #8B5CF6 - Roxo violeta principal */
+  --primary-hover: 124 58 237;
+  /* #7C3AED - Roxo violeta hover */
+  --primary-light: 168 85 247;
+  /* #A855F7 - Roxo claro */
+  --accent: 236 72 153;
+  /* #EC4899 - Rosa accent */
+  --success: 34 197 94;
+  /* #22C55E - Verde sucesso */
+  --warning: 251 191 36;
+  /* #FBBF24 - Amarelo aviso */
+  --error: 239 68 68;
+  /* #EF4444 - Vermelho erro */
+  --info: 59 130 246;
+  /* #3B82F6 - Azul informação */
+  /* Variáveis específicas para inputs */
+  --input-bg: 31 31 31;
+  /* #1F1F1F - Fundo dos inputs mais escuro */
+  --input-border: 55 55 55;
+  /* #373737 - Borda dos inputs */
+  --input-text: 255 255 255;
+  /* #FFFFFF - Texto dos inputs */
+  --input-placeholder: 107 114 128;
+  /* #6B7280 - Placeholder */
 }
 
 /* Aplicação global */
@@ -68,8 +130,8 @@ body {
 .card,
 .dashboard-card,
 .stats-card {
-  background-color: rgb(var(--bg-secondary));
-  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--bg-card));
+  border: 1px solid rgb(var(--border-primary));
   border-radius: 0.5rem;
   padding: 1rem;
   transition: all 0.2s ease;
@@ -85,10 +147,10 @@ body {
 input,
 textarea,
 select {
-  background-color: rgb(var(--bg-primary));
-  border: 1px solid rgb(var(--border));
+  background-color: rgb(var(--input-bg));
+  border: 1px solid rgb(var(--input-border));
   border-radius: 0.375rem;
-  color: rgb(var(--text-primary));
+  color: rgb(var(--input-text));
   padding: 0.5rem 0.75rem;
   transition: all 0.2s ease;
   width: 100%;
@@ -104,7 +166,7 @@ select:focus {
 
 input::placeholder,
 textarea::placeholder {
-  color: rgb(var(--text-muted));
+  color: rgb(var(--input-placeholder));
 }
 
 /* Botões */
@@ -203,4 +265,173 @@ a:hover {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--text-muted));
+}
+
+/* ===== ELEMENTOS ESPECÍFICOS DO TEMA PLAN ===== */
+
+/* Tags e badges */
+.badge,
+.tag {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge.primary,
+.tag.primary {
+  background-color: rgba(var(--primary), 0.2);
+  color: rgb(var(--primary));
+  border: 1px solid rgba(var(--primary), 0.3);
+}
+
+.badge.success,
+.tag.success {
+  background-color: rgba(var(--success), 0.2);
+  color: rgb(var(--success));
+  border: 1px solid rgba(var(--success), 0.3);
+}
+
+.badge.warning,
+.tag.warning {
+  background-color: rgba(var(--warning), 0.2);
+  color: rgb(var(--warning));
+  border: 1px solid rgba(var(--warning), 0.3);
+}
+
+.badge.error,
+.tag.error {
+  background-color: rgba(var(--error), 0.2);
+  color: rgb(var(--error));
+  border: 1px solid rgba(var(--error), 0.3);
+}
+
+/* Status indicators */
+.status-new {
+  background-color: rgba(var(--info), 0.2);
+  color: rgb(var(--info));
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-progress {
+  background-color: rgba(var(--success), 0.2);
+  color: rgb(var(--success));
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-warning {
+  background-color: rgba(var(--warning), 0.2);
+  color: rgb(var(--warning));
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Activity items para feeds de atividade */
+.activity-item {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.activity-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(45deg, rgb(var(--primary)), rgb(var(--accent)));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.activity-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  background: rgba(var(--primary), 0.1);
+  color: rgb(var(--primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+/* Elementos destacados com gradiente roxo */
+.highlight-purple {
+  background: linear-gradient(45deg, rgb(var(--primary)), rgb(var(--primary-light)));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.highlight-purple:hover {
+  background: linear-gradient(45deg, rgb(var(--primary-hover)), rgb(var(--primary)));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary), 0.3);
+}
+
+/* Cards especiais para o tema escuro */
+.dark-card {
+  background-color: rgb(var(--bg-card));
+  border: 1px solid rgb(var(--border-primary));
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark-card:hover {
+  border-color: rgb(var(--primary));
+  box-shadow: 0 4px 12px rgba(var(--primary), 0.1);
+}
+
+/* Gradientes para avatares e ícones */
+.gradient-primary {
+  background: linear-gradient(135deg, rgb(var(--primary)), rgb(var(--primary-light)));
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, rgb(var(--accent)), rgb(var(--primary)));
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, rgb(var(--success)), rgb(var(--info)));
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, rgb(var(--warning)), rgb(var(--accent)));
+}
+
+/* Transições suaves para mudanças de tema */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Scrollbars customizados para o tema escuro */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgb(var(--bg-secondary));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-primary));
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--text-tertiary));
 }
