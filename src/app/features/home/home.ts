@@ -12,6 +12,7 @@ import {
 } from 'lucide-angular';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +24,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class Home {
   private readonly authService = inject(AuthService);
+  private readonly notificationService = inject(NotificationService);
 
   // Lucide icons
   protected readonly Users = Users;
@@ -54,4 +56,43 @@ export class Home {
       return `Boa noite, ${userName}!`;
     }
   });
+
+  /**
+   * Métodos de demonstração das notificações Toast
+   */
+  protected showSuccessToast(): void {
+    this.notificationService.success(
+      'Operação realizada com sucesso!',
+      'Seus dados foram salvos corretamente.'
+    );
+  }
+
+  protected showErrorToast(): void {
+    this.notificationService.error(
+      'Erro na operação',
+      'Algo deu errado. Tente novamente.'
+    );
+  }
+
+  protected showWarningToast(): void {
+    this.notificationService.warn(
+      'Atenção necessária',
+      'Verifique os dados antes de continuar.'
+    );
+  }
+
+  protected showInfoToast(): void {
+    this.notificationService.info(
+      'Informação importante',
+      'Nova atualização disponível no sistema.'
+    );
+  }
+
+  protected showMultipleToasts(): void {
+    this.notificationService.showMultiple([
+      { severity: 'success', summary: 'Sucesso', detail: 'Primeiro item processado' },
+      { severity: 'info', summary: 'Info', detail: 'Segundo item em processamento' },
+      { severity: 'warn', summary: 'Aviso', detail: 'Terceiro item precisa de atenção' }
+    ]);
+  }
 }

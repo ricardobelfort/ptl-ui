@@ -29,6 +29,7 @@ import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ExportService } from '../../../core/services/export.service';
 import { AccessLog, LogsFilters, LogsResponse, LogsService } from '../../../core/services/logs.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-logs-acesso',
@@ -58,6 +59,7 @@ export class LogsAcessoComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly exportService = inject(ExportService);
+  private readonly notificationService = inject(NotificationService);
 
   // Lucide Icons
   protected readonly Activity = Activity;
@@ -190,10 +192,22 @@ export class LogsAcessoComponent implements OnInit {
       next: (response: LogsResponse) => {
         this.logs.set(response.logs);
         this.pagination.set(response.pagination);
+
+        // Notificação informativa apenas se nenhum registro for encontrado após aplicar filtros
+        if (response.logs.length === 0 && Object.keys(filters || {}).length > 0) {
+          this.notificationService.info(
+            'Nenhum registro encontrado',
+            'Tente ajustar os filtros para encontrar resultados'
+          );
+        }
       },
       error: (err) => {
         console.error('Erro ao carregar logs:', err);
         this.error.set('Erro ao carregar os logs de acesso. Tente novamente.');
+        this.notificationService.error(
+          'Erro ao carregar logs',
+          `Não foi possível carregar os logs de acesso. ${err.message || 'Tente novamente.'}`
+        );
       }
     });
   }
@@ -267,6 +281,8 @@ export class LogsAcessoComponent implements OnInit {
    */
   protected async exportToExcel(): Promise<void> {
     try {
+      this.notificationService.loading('Gerando planilha Excel...', true);
+
       const exportData = {
         filename: `logs-acesso-${new Date().toISOString().split('T')[0]}`,
         title: 'Relatório de Logs de Acesso',
@@ -289,9 +305,20 @@ export class LogsAcessoComponent implements OnInit {
 
       await this.exportService.exportToExcel(exportData);
       this.showExportMenu.set(false);
+
+      this.notificationService.clear();
+      this.notificationService.success(
+        'Planilha gerada com sucesso',
+        `${this.logs().length} registros exportados para Excel`
+      );
     } catch (error) {
       console.error('Erro ao exportar para Excel:', error);
       this.error.set('Erro ao exportar logs para Excel. Tente novamente.');
+      this.notificationService.clear();
+      this.notificationService.error(
+        'Erro na exportação',
+        `Não foi possível exportar os logs para Excel. ${(error as any)?.message || 'Tente novamente.'}`
+      );
     }
   }
 
@@ -300,6 +327,8 @@ export class LogsAcessoComponent implements OnInit {
    */
   protected async exportToPDF(): Promise<void> {
     try {
+      this.notificationService.loading('Gerando relatório PDF...', true);
+
       const exportData = {
         filename: `logs-acesso-${new Date().toISOString().split('T')[0]}`,
         title: 'Relatório de Logs de Acesso',
@@ -320,9 +349,20 @@ export class LogsAcessoComponent implements OnInit {
 
       await this.exportService.exportToPDF(exportData);
       this.showExportMenu.set(false);
+
+      this.notificationService.clear();
+      this.notificationService.success(
+        'Relatório gerado com sucesso',
+        `${this.logs().length} registros exportados para PDF`
+      );
     } catch (error) {
       console.error('Erro ao exportar para PDF:', error);
       this.error.set('Erro ao exportar logs para PDF. Tente novamente.');
+      this.notificationService.clear();
+      this.notificationService.error(
+        'Erro na exportação',
+        `Não foi possível exportar os logs para PDF. ${(error as any)?.message || 'Tente novamente.'}`
+      );
     }
   }
 
