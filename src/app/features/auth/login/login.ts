@@ -11,6 +11,11 @@ import {
   Shield,
   User
 } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { PasswordModule } from 'primeng/password';
 import { ApiError, LoginRequest } from '../../../core/interfaces/auth.interface';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoadingComponent } from '../../../shared/components';
@@ -20,7 +25,16 @@ import { LoadingComponent } from '../../../shared/components';
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule, LoadingComponent],
+  imports: [
+    ReactiveFormsModule,
+    LucideAngularModule,
+    LoadingComponent,
+    InputTextModule,
+    PasswordModule,
+    CheckboxModule,
+    ButtonModule,
+    MessageModule
+  ],
 })
 export class Login {
   private readonly router = inject(Router);

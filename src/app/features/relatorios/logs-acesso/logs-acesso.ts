@@ -1,12 +1,10 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   Activity,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Download,
   FileText,
@@ -18,16 +16,39 @@ import {
   Shield,
   User
 } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
+import { DatePickerModule } from 'primeng/datepicker';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
+import { SelectModule } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { ToolbarModule } from 'primeng/toolbar';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { ExportService } from '../../../core/services/export.service';
 import { AccessLog, LogsFilters, LogsResponse, LogsService } from '../../../core/services/logs.service';
-import { LoadingComponent } from '../../../shared/components/loading';
 
 @Component({
   selector: 'app-logs-acesso',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, DatePipe, LoadingComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    LucideAngularModule,
+    DatePipe,
+    InputTextModule,
+    DatePickerModule,
+    ButtonModule,
+    IconFieldModule,
+    InputIconModule,
+    SelectModule,
+    PaginatorModule,
+    TableModule,
+    ToolbarModule
+  ],
   templateUrl: './logs-acesso.html',
   styleUrls: ['./logs-acesso.css']
 })
@@ -41,8 +62,6 @@ export class LogsAcessoComponent implements OnInit {
   // Lucide Icons
   protected readonly Activity = Activity;
   protected readonly Calendar = Calendar;
-  protected readonly ChevronLeft = ChevronLeft;
-  protected readonly ChevronRight = ChevronRight;
   protected readonly Clock = Clock;
   protected readonly Download = Download;
   protected readonly FileText = FileText;
@@ -70,6 +89,33 @@ export class LogsAcessoComponent implements OnInit {
   protected readonly showFilters = signal(false);
   protected readonly showExportMenu = signal(false);
   protected readonly filtersForm: FormGroup;
+
+  // Opções para os selects
+  protected readonly methodOptions = [
+    { label: 'Todos', value: '' },
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' },
+    { label: 'PATCH', value: 'PATCH' }
+  ];
+
+  protected readonly statusCodeOptions = [
+    { label: 'Todos', value: '' },
+    { label: '200 - OK', value: '200' },
+    { label: '201 - Created', value: '201' },
+    { label: '400 - Bad Request', value: '400' },
+    { label: '401 - Unauthorized', value: '401' },
+    { label: '403 - Forbidden', value: '403' },
+    { label: '404 - Not Found', value: '404' },
+    { label: '500 - Internal Error', value: '500' }
+  ];
+
+  protected readonly successOptions = [
+    { label: 'Todos', value: '' },
+    { label: 'Sucesso', value: 'true' },
+    { label: 'Erro', value: 'false' }
+  ];
 
   // Computed
   protected readonly currentUser = this.authService.user;
@@ -179,23 +225,27 @@ export class LogsAcessoComponent implements OnInit {
   }
 
   /**
-   * Navega para a próxima página
+   * Manipula eventos do Paginator do PrimeNG
    */
-  protected nextPage(): void {
-    if (this.pagination().hasNextPage) {
-      this.pagination.update(p => ({ ...p, page: p.page + 1 }));
-      this.loadLogs(this.filtersForm.value);
-    }
+  protected onPaginatorChange(event: any): void {
+    this.pagination.update(p => ({
+      ...p,
+      page: event.page + 1, // PrimeNG usa índice 0, nossa API usa índice 1
+      limit: event.rows
+    }));
+    this.loadLogs(this.filtersForm.value);
   }
 
   /**
-   * Navega para a página anterior
+   * Manipula eventos de paginação da Tabela do PrimeNG
    */
-  protected prevPage(): void {
-    if (this.pagination().hasPrevPage) {
-      this.pagination.update(p => ({ ...p, page: p.page - 1 }));
-      this.loadLogs(this.filtersForm.value);
-    }
+  protected onTablePageChange(event: any): void {
+    this.pagination.update(p => ({
+      ...p,
+      page: (event.first / event.rows) + 1, // PrimeNG Table usa first, converter para página
+      limit: event.rows
+    }));
+    this.loadLogs(this.filtersForm.value);
   }
 
   /**
@@ -327,14 +377,6 @@ export class LogsAcessoComponent implements OnInit {
   }
 
   /**
-   * Calcula o número de registros exibidos
-   */
-  protected getDisplayedRecords(): number {
-    const p = this.pagination();
-    return Math.min(p.page * p.limit, p.total);
-  }
-
-  /**
    * Altera o número de linhas por página
    */
   protected onRowsPerPageChange(event: Event): void {
@@ -348,18 +390,5 @@ export class LogsAcessoComponent implements OnInit {
     }));
 
     this.loadLogs(this.filtersForm.value);
-  }
-
-  /**
-   * Navega para uma página específica
-   */
-  protected onPageChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const newPage = parseInt(target.value, 10);
-
-    if (newPage >= 1 && newPage <= this.pagination().totalPages) {
-      this.pagination.update(p => ({ ...p, page: newPage }));
-      this.loadLogs(this.filtersForm.value);
-    }
   }
 }

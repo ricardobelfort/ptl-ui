@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
 
 /* ===== SISTEMA DE CORES CUSTOMIZADO ===== */
 
@@ -45,15 +47,6 @@
   /* #EF4444 - Vermelho erro */
   --info: 59 130 246;
   /* #3B82F6 - Azul informação */
-  /* Variáveis específicas para inputs */
-  --input-bg: 255 255 255;
-  /* #FFFFFF - Fundo dos inputs */
-  --input-border: 226 232 240;
-  /* #E2E8F0 - Borda dos inputs */
-  --input-text: 15 23 42;
-  /* #0F172A - Texto dos inputs */
-  --input-placeholder: 148 163 184;
-  /* #94A3B8 - Placeholder */
 }
 
 /* Dark mode colors - Inspirado na interface Plan */
@@ -95,18 +88,10 @@
   --warning: 251 191 36;
   /* #FBBF24 - Amarelo aviso */
   --error: 239 68 68;
+  --error: 239 68 68;
   /* #EF4444 - Vermelho erro */
   --info: 59 130 246;
   /* #3B82F6 - Azul informação */
-  /* Variáveis específicas para inputs */
-  --input-bg: 31 31 31;
-  /* #1F1F1F - Fundo dos inputs mais escuro */
-  --input-border: 55 55 55;
-  /* #373737 - Borda dos inputs */
-  --input-text: 255 255 255;
-  /* #FFFFFF - Texto dos inputs */
-  --input-placeholder: 107 114 128;
-  /* #6B7280 - Placeholder */
 }
 
 /* Aplicação global */
@@ -141,63 +126,6 @@ body {
 .dashboard-card:hover,
 .stats-card:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Formulários */
-input,
-textarea,
-select {
-  background-color: rgb(var(--input-bg));
-  border: 1px solid rgb(var(--input-border));
-  border-radius: 0.375rem;
-  color: rgb(var(--input-text));
-  padding: 0.5rem 0.75rem;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: rgb(var(--primary));
-  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: rgb(var(--input-placeholder));
-}
-
-/* Botões */
-button {
-  transition: all 0.2s ease;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: rgb(var(--primary));
-  color: white;
-  border: 1px solid rgb(var(--primary));
-}
-
-.btn-primary:hover {
-  background-color: rgb(var(--primary-hover));
-  border-color: rgb(var(--primary-hover));
-}
-
-.btn-secondary {
-  background-color: rgb(var(--bg-tertiary));
-  color: rgb(var(--text-secondary));
-  border: 1px solid rgb(var(--border));
-}
-
-.btn-secondary:hover {
-  background-color: rgb(var(--bg-secondary));
-  color: rgb(var(--text-primary));
 }
 
 /* Links */

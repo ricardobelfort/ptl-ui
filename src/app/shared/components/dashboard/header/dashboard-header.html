@@ -18,7 +18,8 @@
       <app-theme-toggle></app-theme-toggle>
 
       <div class="user-menu" [class.open]="isMenuOpen()">
-        <button class="user-avatar-btn" (click)="toggleUserMenu()" type="button" aria-label="User menu">
+        <p-button (click)="toggleUserMenu()" [text]="true" styleClass="user-avatar-btn !p-0 !border-0 !bg-transparent"
+          aria-label="User menu">
           <div class="user-avatar">
             @if (user()?.avatar) {
             <img [src]="user()!.avatar" [alt]="user()!.name" class="avatar-image">
@@ -33,24 +34,27 @@
             <span class="user-role">{{ user()?.role || 'user' }}</span>
           </div>
           <div class="dropdown-arrow"></div>
-        </button>
+        </p-button>
 
         <!-- Dropdown menu -->
         @if (isMenuOpen()) {
         <div class="user-dropdown">
-          <button class="dropdown-item" (click)="onProfile()">
-            <lucide-icon [img]="User" size="16"></lucide-icon>
-            Perfil
-          </button>
-          <button class="dropdown-item" (click)="onSettings()">
-            <lucide-icon [img]="Settings" size="16"></lucide-icon>
-            Configurações
-          </button>
+          <p-button (click)="onProfile()" [text]="true"
+            styleClass="dropdown-item !justify-start !text-left !w-full !p-2 !text-surface-700 dark:!text-surface-200 hover:!bg-surface-100 dark:hover:!bg-surface-800">
+            <lucide-icon [img]="User" size="16" class="text-surface-600 dark:text-surface-300"></lucide-icon>
+            <span class="ml-2">Perfil</span>
+          </p-button>
+          <p-button (click)="onSettings()" [text]="true"
+            styleClass="dropdown-item !justify-start !text-left !w-full !p-2 !text-surface-700 dark:!text-surface-200 hover:!bg-surface-100 dark:hover:!bg-surface-800">
+            <lucide-icon [img]="Settings" size="16" class="text-surface-600 dark:text-surface-300"></lucide-icon>
+            <span class="ml-2">Configurações</span>
+          </p-button>
           <hr class="dropdown-divider">
-          <button class="dropdown-item logout" (click)="onLogout()">
-            <lucide-icon [img]="LogOut" size="16"></lucide-icon>
-            Sair
-          </button>
+          <p-button (click)="onLogout()" [text]="true"
+            styleClass="dropdown-item logout !justify-start !text-left !w-full !p-2 !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/20">
+            <lucide-icon [img]="LogOut" size="16" class="text-red-500 dark:text-red-400"></lucide-icon>
+            <span class="ml-2">Sair</span>
+          </p-button>
         </div>
         }
       </div>

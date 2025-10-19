@@ -10,12 +10,13 @@ import {
   UserPlus,
   Users
 } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, ButtonModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -18,80 +18,56 @@
         <div class="space-y-2">
           <label for="email" class="block text-sm font-semibold text-gray-700"> E-mail </label>
           <div class="relative">
-            <input id="email" type="email" formControlName="email" placeholder="seu@email.com"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 text-gray-900 placeholder-gray-500"
-              [class.border-red-300]="
-                loginForm.get('email')?.invalid && loginForm.get('email')?.touched
-              " />
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <input pInputText id="email" type="email" formControlName="email" placeholder="seu@email.com"
+              [invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" fluid
+              class="text-gray-900" />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
               <lucide-icon [img]="User" size="20" class="text-gray-400"></lucide-icon>
             </div>
           </div>
           @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-          <p class="text-sm text-red-600 flex items-center">
-            <lucide-icon [img]="AlertCircle" size="16" class="mr-1"></lucide-icon>
+          <div class="mt-1">
             @if (loginForm.get('email')?.errors?.['required']) {
-            E-mail é obrigatório
+            <p-message severity="error" size="small" variant="simple">E-mail é obrigatório</p-message>
             } @else if (loginForm.get('email')?.errors?.['email']) {
-            E-mail inválido
+            <p-message severity="error" size="small" variant="simple">E-mail inválido</p-message>
             }
-          </p>
+          </div>
           }
         </div>
 
         <!-- Campo Senha -->
         <div class="space-y-2">
           <label for="password" class="block text-sm font-semibold text-gray-700"> Senha </label>
-          <div class="relative">
-            <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
-              placeholder="••••••••"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 text-gray-900 placeholder-gray-500"
-              [class.border-red-300]="
-                loginForm.get('password')?.invalid && loginForm.get('password')?.touched
-              " />
-            <button type="button" (click)="togglePasswordVisibility()"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600 transition-colors">
-              @if (showPassword()) {
-              <lucide-icon [img]="EyeOff" size="20" class="text-gray-400"></lucide-icon>
-              } @else {
-              <lucide-icon [img]="Eye" size="20" class="text-gray-400"></lucide-icon>
-              }
-            </button>
-          </div>
+          <p-password formControlName="password" inputId="password" placeholder="••••••••" [feedback]="false"
+            [toggleMask]="true" [invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            fluid />
           @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-          <p class="text-sm text-red-600 flex items-center">
-            <lucide-icon [img]="AlertCircle" size="16" class="mr-1"></lucide-icon>
+          <div class="mt-1">
             @if (loginForm.get('password')?.errors?.['required']) {
-            Senha é obrigatória
+            <p-message severity="error" size="small" variant="simple">Senha é obrigatória</p-message>
             } @else if (loginForm.get('password')?.errors?.['minlength']) {
-            Senha deve ter pelo menos 6 caracteres
+            <p-message severity="error" size="small" variant="simple">Senha deve ter pelo menos 6 caracteres</p-message>
             }
-          </p>
+          </div>
           }
         </div>
 
         <!-- Lembrar-me -->
         <div class="flex items-center">
-          <input id="rememberMe" type="checkbox" formControlName="rememberMe"
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors" />
-          <label for="rememberMe" class="ml-2 block text-sm text-gray-700 cursor-pointer">
-            Lembrar-me
-          </label>
+          <p-checkbox formControlName="rememberMe" inputId="rememberMe" />
+          <label for="rememberMe" class="ml-2"> Lembrar-me </label>
         </div>
 
         <!-- Mensagem de Erro -->
         @if (errorMessage()) {
-        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
-          <div class="flex items-center">
-            <lucide-icon [img]="AlertCircle" size="20" class="text-red-400 mr-3"></lucide-icon>
-            <p class="text-sm text-red-700 font-medium">{{ errorMessage() }}</p>
-          </div>
-        </div>
+        <p-message severity="error" [text]="errorMessage() || ''" />
         }
 
         <!-- Botão de Login -->
-        <button type="submit" [disabled]="loginForm.invalid || isLoading()"
-          class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 disabled:cursor-not-allowed shadow-lg disabled:shadow-none">
+        <p-button type="submit" [disabled]="loginForm.invalid || isLoading()" size="large"
+          styleClass="!w-full !h-12 !bg-gradient-to-r !from-blue-600 !to-indigo-600 hover:!from-blue-700 hover:!to-indigo-700 disabled:!from-gray-400 disabled:!to-gray-400 !text-white !font-semibold !rounded-xl !shadow-lg disabled:!shadow-none !border-0"
+          class="w-full">
           @if (isLoading()) {
           <div class="flex items-center justify-center">
             <app-loading type="spinner" size="sm" [inline]="true" />
@@ -100,16 +76,16 @@
           } @else {
           Entrar
           }
-        </button>
+        </p-button>
 
         <!-- Links de Ação -->
         <div class="space-y-4 pt-4">
           <!-- Esqueceu a Senha -->
           <div class="text-center">
-            <button type="button" (click)="onForgotPassword()"
-              class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+            <p-button (click)="onForgotPassword()" [text]="true" size="small"
+              styleClass="!text-sm !text-blue-600 hover:!text-blue-700 !font-medium !border-0 !bg-transparent hover:!bg-transparent">
               Esqueceu sua senha?
-            </button>
+            </p-button>
           </div>
 
           <!-- Divisor -->
@@ -126,10 +102,10 @@
           <div class="text-center">
             <p class="text-sm text-gray-600">
               Não tem uma conta?
-              <button type="button" (click)="onRegister()"
-                class="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-200 ml-1">
+              <p-button (click)="onRegister()" [text]="true" size="small"
+                styleClass="!text-sm !font-semibold !text-blue-600 hover:!text-blue-700 !ml-1 !p-0 !border-0 !bg-transparent">
                 Criar conta
-              </button>
+              </p-button>
             </p>
           </div>
         </div>

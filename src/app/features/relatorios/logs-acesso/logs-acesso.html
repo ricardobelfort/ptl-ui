@@ -1,123 +1,34 @@
-<div class="logs-container">
-  <!-- Header -->
-  <div class="logs-header">
-    <div class="header-title">
-      <lucide-icon [img]="Shield" class="header-icon"></lucide-icon>
+<div class="logs-container !p-6 !min-h-screen" style="background: var(--surface-ground)">
+  <!-- Header com Toolbar do PrimeNG -->
+  <div class="!mb-6">
+    <div class="!flex !items-center !gap-3 !mb-4">
+      <lucide-icon [img]="Shield" class="!w-8 !h-8 !text-primary-600"></lucide-icon>
       <div>
-        <h1>Logs de Acesso</h1>
-        <p>Monitoramento de acessos ao sistema</p>
+        <h1 class="!text-2xl !font-bold !m-0" style="color: var(--text-color)">Logs de Acesso</h1>
+        <p class="!m-0 !mt-1" style="color: var(--text-color-secondary)">Monitoramento de acessos ao sistema</p>
       </div>
     </div>
 
-    <div class="header-actions">
-      <button type="button" class="btn btn-secondary" (click)="toggleFilters()" [class.active]="showFilters()">
-        <lucide-icon [img]="Filter"></lucide-icon>
-        Filtros
-      </button>
-
-      <button type="button" class="btn btn-secondary" (click)="refresh()" [disabled]="isLoading()">
-        <lucide-icon [img]="RefreshCw" [class.animate-spin]="isLoading()"></lucide-icon>
-        Atualizar
-      </button>
-
-      <div class="export-dropdown" [class.active]="showExportMenu()">
-        <button type="button" class="btn btn-primary" (click)="toggleExportMenu()">
-          <lucide-icon [img]="Download"></lucide-icon>
-          Exportar
-        </button>
-
-        @if (showExportMenu()) {
-        <div class="export-menu">
-          <button type="button" class="export-option" (click)="exportToExcel()">
-            <lucide-icon [img]="FileText" size="16"></lucide-icon>
-            <span>Excel (CSV)</span>
-          </button>
-          <button type="button" class="export-option" (click)="exportToPDF()">
-            <lucide-icon [img]="Download" size="16"></lucide-icon>
-            <span>PDF</span>
-          </button>
-        </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  <!-- Filtros -->
-  <div class="filters-container" [class.show]="showFilters()">
-    <form [formGroup]="filtersForm" class="filters-form">
-      <div class="filters-row">
-        <div class="filter-group">
-          <label for="email">Email</label>
-          <div class="input-with-icon">
-            <lucide-icon [img]="User" class="input-icon"></lucide-icon>
-            <input type="email" id="email" formControlName="email" placeholder="Filtrar por email...">
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label for="method">Método</label>
-          <select id="method" formControlName="method">
-            <option value="">Todos</option>
-            <option value="GET">GET</option>
-            <option value="POST">POST</option>
-            <option value="PUT">PUT</option>
-            <option value="DELETE">DELETE</option>
-            <option value="PATCH">PATCH</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="statusCode">Status</label>
-          <select id="statusCode" formControlName="statusCode">
-            <option value="">Todos</option>
-            <option value="200">200 - OK</option>
-            <option value="201">201 - Created</option>
-            <option value="400">400 - Bad Request</option>
-            <option value="401">401 - Unauthorized</option>
-            <option value="403">403 - Forbidden</option>
-            <option value="404">404 - Not Found</option>
-            <option value="500">500 - Internal Error</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="success">Resultado</label>
-          <select id="success" formControlName="success">
-            <option value="">Todos</option>
-            <option value="true">Sucesso</option>
-            <option value="false">Erro</option>
-          </select>
-        </div>
+    <p-toolbar styleClass="!rounded-lg">
+      <div class="p-toolbar-group-start">
+        <p-button (click)="refresh()" severity="secondary" [loading]="isLoading()" styleClass="!mr-2">
+          <lucide-icon [img]="RefreshCw" class="!w-4 !h-4 !mr-2" [class.animate-spin]="isLoading()"></lucide-icon>
+          Atualizar
+        </p-button>
       </div>
 
-      <div class="filters-row">
-        <div class="filter-group">
-          <label for="path">Endpoint</label>
-          <input type="text" id="path" formControlName="path" placeholder="Ex: /api/users">
-        </div>
+      <div class="p-toolbar-group-end">
+        <p-button (click)="exportToExcel()" severity="success" styleClass="!mr-2">
+          <lucide-icon [img]="FileText" class="!w-4 !h-4 !mr-2"></lucide-icon>
+          Excel
+        </p-button>
 
-        <div class="filter-group">
-          <label for="ip">IP Address</label>
-          <input type="text" id="ip" formControlName="ip" placeholder="Ex: 192.168.1.1">
-        </div>
-
-        <div class="filter-group">
-          <label for="startDate">Data Inicial</label>
-          <input type="datetime-local" id="startDate" formControlName="startDate">
-        </div>
-
-        <div class="filter-group">
-          <label for="endDate">Data Final</label>
-          <input type="datetime-local" id="endDate" formControlName="endDate">
-        </div>
+        <p-button (click)="exportToPDF()" severity="help">
+          <lucide-icon [img]="Download" class="!w-4 !h-4 !mr-2"></lucide-icon>
+          PDF
+        </p-button>
       </div>
-
-      <div class="filters-actions">
-        <button type="button" class="btn btn-outline btn-sm" (click)="clearFilters()">
-          Limpar Filtros
-        </button>
-      </div>
-    </form>
+    </p-toolbar>
   </div>
 
   <!-- Error Message -->
@@ -128,141 +39,199 @@
   </div>
   }
 
-  <!-- Loading -->
-  @if (isLoading()) {
-  <app-loading type="refresh" size="lg" message="Carregando logs..." [fullscreen]="true">
-  </app-loading>
-  } <!-- Logs Table -->
-  @if (!isLoading() && logs().length > 0) {
-  <div class="table-container">
-    <table class="logs-table">
-      <thead>
-        <tr>
-          <th>Data/Hora</th>
-          <th>Usuário</th>
-          <th>Método</th>
-          <th>Endpoint</th>
-          <th>Status</th>
-          <th>Sucesso</th>
-          <th>Tempo</th>
-          <th>IP</th>
-          <th>User Agent</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (log of logs(); track log._id; let i = $index) {
-        <tr [style.--row-index]="i">
-          <td class="timestamp-cell">
-            <div class="timestamp">
-              {{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}
-            </div>
-          </td>
-          <td class="user-cell">
-            <div class="user-info">
-              <div>
-                <div class="user-email">{{ log.email }}</div>
-                <div class="user-name">{{ log.nome }}</div>
-                <span class="user-role badge" [class]="'badge-' + log.perfil">
-                  {{ log.perfil }}
-                </span>
-              </div>
-            </div>
-          </td>
+  <!-- PrimeNG Table -->
+  <p-table #dt [value]="logs()" stripedRows [loading]="isLoading()" [paginator]="true" [rows]="pagination().limit"
+    [totalRecords]="pagination().total" [first]="(pagination().page - 1) * pagination().limit"
+    [rowsPerPageOptions]="[10, 25, 50, 100]" [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    (onPage)="onTablePageChange($event)" [lazy]="true" dataKey="_id" [tableStyle]="{'min-width': '80rem'}"
+    [scrollable]="true" scrollHeight="60vh" [globalFilterFields]="['email', 'method', 'path', 'ip']">
 
-          <td class="method-cell">
-            <span class="method-badge" [class]="getMethodClass(log.method)">
-              {{ log.method }}
+    <!-- Empty State Template -->
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" class="!text-center !p-8 !border-0">
+          <div class="!flex !flex-col !items-center !justify-center !text-center !min-h-[16rem] !w-full">
+            <lucide-icon [img]="Activity" class="!w-12 !h-12 !text-surface-400 !mb-4"></lucide-icon>
+            <h3 class="!text-lg !font-semibold !text-surface-600 dark:!text-surface-400 !mb-2">Nenhum log encontrado
+            </h3>
+            <p class="!text-surface-500 dark:!text-surface-500 !max-w-md">Não foram encontrados logs de acesso com os
+              filtros
+              aplicados.</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <!-- Header -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="createdAt" style="width:14%">
+          <div class="flex items-center gap-2">
+            <lucide-icon [img]="Clock" class="w-4 h-4"></lucide-icon>
+            Data/Hora
+            <p-sortIcon field="createdAt"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="email" style="width:16%">
+          <div class="flex items-center gap-2">
+            <lucide-icon [img]="User" class="w-4 h-4"></lucide-icon>
+            Usuário
+            <p-sortIcon field="email"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="method" style="width:10%">
+          <div class="flex items-center gap-2">
+            Método
+            <p-sortIcon field="method"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="path" style="width:20%">
+          <div class="flex items-center gap-2">
+            Endpoint
+            <p-sortIcon field="path"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="statusCode" style="width:10%">
+          <div class="flex items-center gap-2">
+            Status
+            <p-sortIcon field="statusCode"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="success" style="width:10%">
+          <div class="flex items-center gap-2">
+            Sucesso
+            <p-sortIcon field="success"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="responseTime" style="width:10%">
+          <div class="flex items-center gap-2">
+            Tempo
+            <p-sortIcon field="responseTime"></p-sortIcon>
+          </div>
+        </th>
+        <th pSortableColumn="ip" style="width:10%">
+          <div class="flex items-center gap-2">
+            IP
+            <p-sortIcon field="ip"></p-sortIcon>
+          </div>
+        </th>
+      </tr>
+      <!-- Filter Row -->
+      <tr>
+        <th>
+          <p-columnFilter type="date" field="createdAt" display="menu"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="email" placeholder="Buscar usuário"
+            ariaLabel="Filter Email"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="method" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-select [ngModel]="value" [options]="methodOptions" (onChange)="filter($event.value)"
+                placeholder="Método" [showClear]="true" optionLabel="label" optionValue="value">
+              </p-select>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="path" placeholder="Buscar endpoint"
+            ariaLabel="Filter Endpoint"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="numeric" field="statusCode" placeholder="Status"
+            ariaLabel="Filter Status"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="success" matchMode="equals" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-select [ngModel]="value" [options]="successOptions" (onChange)="filter($event.value)"
+                placeholder="Sucesso" [showClear]="true" optionLabel="label" optionValue="value">
+              </p-select>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="numeric" field="responseTime" placeholder="Tempo"
+            ariaLabel="Filter Response Time"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="ip" placeholder="IP" ariaLabel="Filter IP"></p-columnFilter>
+        </th>
+      </tr>
+    </ng-template>
+
+    <!-- Body -->
+    <ng-template pTemplate="body" let-log let-rowIndex="rowIndex">
+      <tr class="!hover:bg-surface-50 dark:!hover:bg-surface-800">
+        <!-- Data/Hora -->
+        <td class="!font-mono !text-sm !text-surface-600 dark:!text-surface-400">
+          {{ log.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+        </td>
+
+        <!-- Usuário -->
+        <td>
+          <div class="!flex !flex-col !gap-1">
+            <div class="!font-medium !text-surface-900 dark:!text-surface-100">{{ log.email }}</div>
+            <div class="!text-sm !text-surface-600 dark:!text-surface-400">{{ log.nome }}</div>
+            <span class="badge !self-start" [ngClass]="{
+                    'badge-admin': log.perfil === 'admin',
+                    'badge-user': log.perfil === 'user',
+                    'badge-manager': log.perfil === 'manager'
+                  }">
+              {{ log.perfil }}
             </span>
-          </td>
+          </div>
+        </td>
 
-          <td class="path-cell">
-            <code>{{ log.path }}</code>
-          </td>
+        <!-- Método -->
+        <td>
+          <span class="badge" [ngClass]="{
+                  'badge-method-get': log.method === 'GET',
+                  'badge-method-post': log.method === 'POST',
+                  'badge-method-put': log.method === 'PUT',
+                  'badge-method-delete': log.method === 'DELETE',
+                  'badge-method-patch': log.method === 'PATCH'
+                }">
+            {{ log.method }}
+          </span>
+        </td>
 
-          <td class="status-cell">
-            <span class="status-badge" [class]="getStatusClass(log.statusCode)">
-              {{ log.statusCode }}
-            </span>
-          </td>
+        <!-- Endpoint -->
+        <td class="!font-mono !text-sm !text-surface-600 dark:!text-surface-400">
+          {{ log.path }}
+        </td>
 
-          <td class="success-cell">
-            <span class="success-badge" [class]="log.success ? 'success-yes' : 'success-no'">
-              {{ log.success ? 'Yes' : 'No' }}
-            </span>
-          </td>
+        <!-- Status -->
+        <td>
+          <span class="badge" [ngClass]="{
+                  'badge-status-success': log.statusCode >= 200 && log.statusCode < 300,
+                  'badge-status-warning': (log.statusCode >= 300 && log.statusCode < 400) || (log.statusCode >= 400 && log.statusCode < 500),
+                  'badge-status-error': log.statusCode >= 500
+                }">{{ log.statusCode }}</span>
+        </td>
 
-          <td class="time-cell">
-            <div class="response-time">
-              {{ formatResponseTime(log.responseTime) }}
-            </div>
-          </td>
+        <!-- Sucesso -->
+        <td>
+          <span class="badge" [ngClass]="{
+                  'badge-success-yes': log.success,
+                  'badge-success-no': !log.success
+                }">
+            {{ log.success ? 'Sim' : 'Não' }}
+          </span>
+        </td>
 
-          <td class="ip-cell">
-            <div class="ip-info">
-              <code>{{ log.ip }}</code>
-            </div>
-          </td>
+        <!-- Tempo -->
+        <td class="!font-mono !text-sm !text-surface-600 dark:!text-surface-400">
+          {{ formatResponseTime(log.responseTime) }}
+        </td>
 
-          <td class="useragent-cell">
-            <span class="user-agent" [title]="log.userAgent">
-              {{ formatUserAgent(log.userAgent) }}
-            </span>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-  }
-
-  <!-- Empty State -->
-  @if (!isLoading() && logs().length === 0) {
-  <div class="empty-state">
-    <lucide-icon [img]="Activity" class="empty-icon"></lucide-icon>
-    <h3>Nenhum log encontrado</h3>
-    <p>Não foram encontrados logs de acesso com os filtros aplicados.</p>
-  </div>
-  }
-
-  <!-- Pagination -->
-  @if (!isLoading() && logs().length > 0) {
-  <div class="pagination-container">
-    <div class="pagination-left">
-      <span class="pagination-text">
-        showing {{ ((pagination().page - 1) * pagination().limit) + 1 }}-{{ getDisplayedRecords() }} of {{
-        pagination().total }} results
-      </span>
-    </div>
-
-    <div class="pagination-right">
-      <div class="rows-per-page">
-        <span class="pagination-text">Linhas por página:</span>
-        <select id="rowsPerPage" name="rowsPerPage" class="rows-select" [value]="pagination().limit"
-          (change)="onRowsPerPageChange($event)">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
-
-      <div class="page-navigation">
-        <span class="pagination-text">Página</span>
-        <input type="number" id="currentPage" name="currentPage" class="page-input" [value]="pagination().page"
-          [min]="1" [max]="pagination().totalPages" (change)="onPageChange($event)">
-        <span class="pagination-text">de {{ pagination().totalPages }}</span>
-
-        <button type="button" class="nav-button" (click)="prevPage()" [disabled]="!pagination().hasPrevPage"
-          aria-label="Previous page">
-          <lucide-icon [img]="ChevronLeft" size="16"></lucide-icon>
-        </button>
-
-        <button type="button" class="nav-button" (click)="nextPage()" [disabled]="!pagination().hasNextPage"
-          aria-label="Next page">
-          <lucide-icon [img]="ChevronRight" size="16"></lucide-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-  }
+        <!-- IP -->
+        <td class="!font-mono !text-sm !text-surface-600 dark:!text-surface-400">
+          {{ log.ip }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>

@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LogOut, LucideAngularModule, Settings, User } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ThemeToggleComponent } from '../../theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-dashboard-header',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, ThemeToggleComponent],
+  imports: [CommonModule, LucideAngularModule, ThemeToggleComponent, ButtonModule],
   templateUrl: './dashboard-header.html',
   styleUrls: ['./dashboard-header.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
