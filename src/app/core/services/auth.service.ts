@@ -105,11 +105,6 @@ export class AuthService implements OnDestroy {
   login(credentials: LoginRequest): Observable<LoginResponseNormalized> {
     this.setLoading(true);
 
-    // Durante desenvolvimento, usar mock se habilitado
-    if (environment.mockApi) {
-      return this.mockLogin(credentials);
-    }
-
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
       map((response) => this.normalizeLoginResponse(response)),
       tap((normalizedResponse) => {
@@ -124,17 +119,23 @@ export class AuthService implements OnDestroy {
    * Normaliza a resposta da API para o formato interno
    */
   private normalizeLoginResponse(response: LoginResponse): LoginResponseNormalized {
+    // Decodifica o JWT para extrair informações do usuário
+    const tokenData = this.decodeJwtToken(response.access_token);
+
+    // Preserva dados do usuário atual se estiver fazendo refresh (response pode não ter nome/perfil)
+    const currentUser = this._authState().user;
+
     return {
       access_token: response.access_token,
       refresh_token: response.refresh_token,
       token_type: response.token_type,
       expires_in: this.parseExpiresIn(response.expires_in),
       user: {
-        id: Math.random().toString(36), // Gerar ID temporário
-        email: '', // Email será obtido do token ou outra chamada
-        name: response.nome,
-        role: response.perfil,
-        avatar: undefined,
+        id: tokenData.sub || currentUser?.id || 'unknown',
+        email: tokenData.email || currentUser?.email || 'admin@ptl.local',
+        name: response.nome || currentUser?.name || 'Administrador Geral',
+        role: response.perfil || tokenData.perfil || currentUser?.role || 'ADMIN',
+        avatar: currentUser?.avatar || undefined,
       },
     };
   }
@@ -153,6 +154,20 @@ export class AuthService implements OnDestroy {
       return parseInt(expiresIn.slice(0, -1)) * 86400;
     }
     return parseInt(expiresIn) || 3600; // Default 1 hora
+  }
+
+  /**
+   * Decodifica o JWT token para extrair informações do payload
+   */
+  private decodeJwtToken(token: string): any {
+    try {
+      const payload = token.split('.')[1];
+      const decoded = atob(payload);
+      return JSON.parse(decoded);
+    } catch (error) {
+      console.error('Error decoding JWT token:', error);
+      return {};
+    }
   }
 
   /**
@@ -178,6 +193,34 @@ export class AuthService implements OnDestroy {
         }
         this.setLoading(false);
       }, 1000);
+    });
+  }
+
+  /**
+   * Mock de refresh token para desenvolvimento
+   */
+  private mockRefreshTokenRequest(): Observable<LoginResponseNormalized> {
+    const currentUser = this._authState().user;
+
+    if (!currentUser) {
+      return throwError(() => new Error('No user data available for refresh'));
+    }
+
+    // Simula delay de rede e retorna novos tokens mantendo o usuário atual
+    return new Observable<LoginResponseNormalized>((observer) => {
+      setTimeout(() => {
+        const refreshResponse: LoginResponseNormalized = {
+          access_token: 'new_mock_jwt_token_' + Date.now(),
+          refresh_token: 'new_mock_refresh_token_' + Date.now(),
+          token_type: 'Bearer',
+          expires_in: 3600,
+          user: currentUser, // Mantém o usuário atual
+        };
+
+        console.log('🔄 Mock refresh token successful, preserving user:', currentUser);
+        observer.next(refreshResponse);
+        observer.complete();
+      }, 500);
     });
   }
 
@@ -208,6 +251,7 @@ export class AuthService implements OnDestroy {
     }
 
     console.log('Attempting to refresh token...');
+
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/refresh`, {
       refresh_token: refreshToken,
     }).pipe(

@@ -5,22 +5,22 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api/v1', // URL da sua API
-  mockApi: false, // Ativar/desativar mock da API para desenvolvimento
+  apiUrl: 'http://localhost:3000/api/v1', // URL da API real
+  mockApi: false, // Mock desabilitado - usando API real
 };
 
 /**
- * Mock de dados para desenvolvimento
- * Remove esta seção quando conectar à API real
+ * Mock de dados para desenvolvimento - APENAS para testes unitários
+ * Não usado em produção - API real em http://localhost:3000
  */
 export const mockAuthData = {
-  // Dados simulados de usuário para teste
+  // Dados simulados de usuário para teste - APENAS para testes unitários
   validCredentials: {
-    email: 'admin@ptl.com',
-    password: '123456',
+    email: 'admin@ptl.local',
+    password: 'admin123',
   },
 
-  // Resposta simulada de login bem-sucedido (formato normalizado)
+  // Resposta simulada de login bem-sucedido - APENAS para testes unitários
   loginResponse: {
     access_token: 'mock_jwt_token_here',
     refresh_token: 'mock_refresh_token_here',
@@ -28,26 +28,20 @@ export const mockAuthData = {
     expires_in: 3600,
     user: {
       id: '1',
-      email: 'admin@ptl.com',
-      name: 'Administrador',
+      email: 'admin@ptl.local',
+      name: 'Administrador Geral',
       role: 'ADMIN',
       avatar: 'https://via.placeholder.com/150',
     },
   },
 
-  // Dados de usuários para teste
+  // Dados de usuários para teste - APENAS para testes unitários
   users: [
     {
       id: '1',
-      email: 'admin@ptl.com',
-      name: 'Administrador',
+      email: 'admin@ptl.local',
+      name: 'Administrador Geral',
       role: 'ADMIN',
-    },
-    {
-      id: '2',
-      email: 'user@ptl.com',
-      name: 'Usuário',
-      role: 'user',
     },
   ],
 };

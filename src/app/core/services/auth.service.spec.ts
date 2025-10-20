@@ -12,24 +12,26 @@ describe('AuthService', () => {
   let routerSpy: jasmine.SpyObj<Router>;
 
   const mockLoginRequest: LoginRequest = {
-    email: 'test@example.com',
-    password: 'password123',
+    email: 'admin@ptl.local',
+    password: 'admin123',
     rememberMe: false
   };
 
   const mockLoginResponse: LoginResponse = {
-    access_token: 'mock_access_token',
+    access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OGYyYmMwYzUxYmU2MjYwYWQ5NjcyNTMiLCJwZXJmaWwiOiJBRE1JTiIsInJlZ2lvZXMiOltdLCJ0b2tlblR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3NjA5ODM0MjcsImV4cCI6MTc2MDk4NDMyN30.IsCbGTcJtiGVe3g2OV9FOowj1atvRUK7NTYOTqPRb7E',
+    refresh_token: 'c908328fde48ce9d65bd7d6e4339fca749d7fb3fdb6fd34223085c275cb0b44b',
     token_type: 'Bearer',
-    expires_in: '3600',
-    perfil: 'admin',
-    nome: 'Test User'
+    expires_in: '15m',
+    refresh_expires_in: '7d',
+    perfil: 'ADMIN',
+    nome: 'Administrador Geral'
   };
 
   const mockUser: User = {
-    id: '1',
-    email: 'test@example.com',
-    name: 'Test User',
-    role: 'admin'
+    id: '68f2bc0c51be6260ad967253',
+    email: 'admin@ptl.local',
+    name: 'Administrador Geral',
+    role: 'ADMIN'
   };
 
   beforeEach(() => {
@@ -126,7 +128,6 @@ describe('AuthService', () => {
     it('should login successfully with real API', () => {
       // Arrange
       spyOn(environment, 'mockApi' as any).and.returnValue(false);
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       // Act
       service.login(mockLoginRequest).subscribe(response => {
@@ -144,37 +145,31 @@ describe('AuthService', () => {
       req.flush(mockLoginResponse);
     });
 
-    it('should login successfully with mock API', fakeAsync(() => {
+    it('should login successfully', fakeAsync(() => {
       // Arrange
-      Object.defineProperty(environment, 'mockApi', { value: true, configurable: true });
       let responseReceived = false;
 
       // Act
-      service.login({
-        email: 'admin@ptl.com',
-        password: '123456',
-        rememberMe: false
-      }).subscribe(response => {
+      service.login(mockLoginRequest).subscribe(response => {
         // Assert
         responseReceived = true;
         expect(response.access_token).toBeTruthy();
-        expect(response.user.email).toBe('admin@ptl.com');
+        expect(response.user.email).toBe('admin@ptl.local');
         expect(service.isAuthenticated()).toBeTrue();
       });
 
-      // Simulate async operation completion - mock API uses setTimeout(1000)
-      tick(1000);
+      // Verify HTTP request was made
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(mockLoginRequest);
+      req.flush(mockLoginResponse);
 
       // Verify response was received
       expect(responseReceived).toBeTrue();
-
-      // No HTTP request should be made for mock
-      httpMock.expectNone(`${environment.apiUrl}/auth/login`);
     }));
 
     it('should handle login error', () => {
       // Arrange
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const errorResponse = { status: 401, statusText: 'Unauthorized' };
 
       // Act & Assert
@@ -192,7 +187,6 @@ describe('AuthService', () => {
 
     it('should set loading state during login', () => {
       // Arrange
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       // Act
       service.login(mockLoginRequest).subscribe();
@@ -210,7 +204,6 @@ describe('AuthService', () => {
 
     it('should handle rememberMe option', () => {
       // Arrange
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const requestWithRemember = { ...mockLoginRequest, rememberMe: true };
 
       // Act
@@ -296,7 +289,7 @@ describe('AuthService', () => {
   describe('Utility Methods', () => {
     it('should get stored token', () => {
       const token = 'stored_token';
-      const user = { id: '1', email: 'test@test.com', name: 'Test User', role: 'user' };
+      const user = { id: '68f2bc0c51be6260ad967253', email: 'admin@ptl.local', name: 'Administrador Geral', role: 'ADMIN' };
 
       // Store token and user in localStorage
       localStorage.setItem('auth_token', token);
@@ -360,7 +353,6 @@ describe('AuthService', () => {
     });
 
     it('should parse expires_in correctly', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       const responseWithExpiresIn = { ...mockLoginResponse, expires_in: '7200' };
 
@@ -375,7 +367,6 @@ describe('AuthService', () => {
 
   describe('Error Handling', () => {
     it('should handle network errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -388,7 +379,6 @@ describe('AuthService', () => {
     });
 
     it('should handle server errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -401,7 +391,6 @@ describe('AuthService', () => {
     });
 
     it('should handle 401 unauthorized errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -415,7 +404,6 @@ describe('AuthService', () => {
     });
 
     it('should handle 403 access denied errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -429,7 +417,6 @@ describe('AuthService', () => {
     });
 
     it('should handle 429 too many requests errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -443,7 +430,6 @@ describe('AuthService', () => {
     });
 
     it('should handle 0 status (server unavailable) errors', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.login(mockLoginRequest).subscribe({
         error: (error: ApiError) => {
@@ -457,7 +443,6 @@ describe('AuthService', () => {
     });
 
     it('should handle unknown error codes with custom message', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
       const customErrorMessage = 'Custom server error message';
 
       service.login(mockLoginRequest).subscribe({
@@ -542,10 +527,10 @@ describe('AuthService', () => {
     beforeEach(() => {
       // Setup user with role
       const userWithRole = {
-        id: '1',
-        email: 'admin@test.com',
-        name: 'Admin User',
-        role: 'admin'
+        id: '68f2bc0c51be6260ad967253',
+        email: 'admin@ptl.local',
+        name: 'Administrador Geral',
+        role: 'ADMIN'
       };
       service['updateAuthState']({
         isAuthenticated: true,
@@ -556,17 +541,17 @@ describe('AuthService', () => {
     });
 
     it('should return true for matching role', () => {
-      expect(service.hasRole('admin')).toBe(true);
+      expect(service.hasRole('ADMIN')).toBe(true);
     });
 
     it('should return false for non-matching role', () => {
-      expect(service.hasRole('user')).toBe(false);
+      expect(service.hasRole('USER')).toBe(false);
     });
 
     it('should return false when user has no role', () => {
       const userWithoutRole = {
-        id: '1',
-        email: 'user@test.com',
+        id: '68f2bc0c51be6260ad967253',
+        email: 'user@ptl.local',
         name: 'Regular User',
         role: undefined as any
       };
@@ -597,9 +582,10 @@ describe('AuthService', () => {
       access_token: 'new_access_token',
       refresh_token: 'new_refresh_token',
       token_type: 'Bearer',
-      expires_in: '3600',
-      perfil: 'admin',
-      nome: 'Test User'
+      expires_in: '15m',
+      refresh_expires_in: '7d',
+      perfil: 'ADMIN',
+      nome: 'Administrador Geral'
     };
 
     beforeEach(() => {
@@ -607,7 +593,6 @@ describe('AuthService', () => {
     });
 
     it('should refresh token successfully', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.refreshToken().subscribe(response => {
         expect(response.access_token).toBe('new_access_token');
@@ -621,7 +606,6 @@ describe('AuthService', () => {
     });
 
     it('should handle refresh token failure', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.refreshToken().subscribe({
         next: () => fail('Should have failed'),
@@ -648,7 +632,6 @@ describe('AuthService', () => {
     });
 
     it('should update auth state after successful refresh', () => {
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.refreshToken().subscribe(() => {
         expect(service.isAuthenticated()).toBeTrue();
@@ -730,7 +713,6 @@ describe('AuthService', () => {
         isLoading: false
       });
 
-      Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
 
       service.checkAndRefreshToken().subscribe(result => {
         expect(result).toBeTrue();

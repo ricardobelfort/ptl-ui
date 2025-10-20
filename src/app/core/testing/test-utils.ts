@@ -1,31 +1,31 @@
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
-import { 
-  User, 
-  LoginRequest, 
-  LoginResponse, 
-  LoginResponseNormalized, 
+import {
   ApiError,
-  AuthState 
+  AuthState,
+  LoginRequest,
+  LoginResponse,
+  LoginResponseNormalized,
+  User
 } from '../interfaces/auth.interface';
 
 /**
  * Mock data for testing
  */
 export class MockAuthData {
+  // User data para mocking
   static readonly validUser: User = {
     id: '1',
-    email: 'test@example.com',
     name: 'Test User',
-    role: 'user',
-    avatar: 'https://example.com/avatar.jpg'
+    email: 'user@test.com',
+    role: 'USER'
   };
 
   static readonly adminUser: User = {
-    id: '2',
-    email: 'admin@ptl.com',
-    name: 'Admin User',
-    role: 'admin'
+    id: '68f2bc0c51be6260ad967253',
+    name: 'Administrador Geral',
+    email: 'admin@ptl.local',
+    role: 'ADMIN'
   };
 
   static readonly validLoginRequest: LoginRequest = {
@@ -35,25 +35,29 @@ export class MockAuthData {
   };
 
   static readonly adminLoginRequest: LoginRequest = {
-    email: 'admin@ptl.com',
-    password: '123456',
+    email: 'admin@ptl.local',
+    password: 'admin123',
     rememberMe: true
   };
 
   static readonly validLoginResponse: LoginResponse = {
     access_token: 'mock_access_token_123',
+    refresh_token: 'mock_refresh_token_123',
     token_type: 'Bearer',
-    expires_in: '3600',
-    perfil: 'user',
+    expires_in: '15m',
+    refresh_expires_in: '7d',
+    perfil: 'USER',
     nome: 'Test User'
   };
 
   static readonly adminLoginResponse: LoginResponse = {
     access_token: 'mock_admin_token_456',
+    refresh_token: 'mock_admin_refresh_456',
     token_type: 'Bearer',
-    expires_in: '7200',
-    perfil: 'admin',
-    nome: 'Admin User'
+    expires_in: '15m',
+    refresh_expires_in: '7d',
+    perfil: 'ADMIN',
+    nome: 'Administrador Geral'
   };
 
   static readonly validNormalizedResponse: LoginResponseNormalized = {
@@ -171,23 +175,23 @@ export class MockAuthService {
    */
   login(credentials: LoginRequest) {
     this._isLoading.set(true);
-    
+
     if (this.shouldSucceed) {
-      const response = credentials.email === 'admin@ptl.com' 
-        ? MockAuthData.adminLoginResponse 
+      const response = credentials.email === 'admin@ptl.local'
+        ? MockAuthData.adminLoginResponse
         : MockAuthData.validLoginResponse;
-      
+
       setTimeout(() => {
         this.setAuthenticatedState();
         this._isLoading.set(false);
       }, 0);
-      
+
       return of({
         access_token: response.access_token,
         refresh_token: MockAuthData.refreshToken,
         token_type: response.token_type,
         expires_in: parseInt(response.expires_in),
-        user: credentials.email === 'admin@ptl.com' ? MockAuthData.adminUser : MockAuthData.validUser
+        user: credentials.email === 'admin@ptl.local' ? MockAuthData.adminUser : MockAuthData.validUser
       });
     } else {
       this._isLoading.set(false);
@@ -271,11 +275,11 @@ export class TestUtils {
         value: defaultValues[key],
         valid: valid,
         hasError: () => !valid,
-        setValue: () => {},
-        patchValue: () => {}
+        setValue: () => { },
+        patchValue: () => { }
       }),
-      patchValue: () => {},
-      reset: () => {}
+      patchValue: () => { },
+      reset: () => { }
     };
   }
 

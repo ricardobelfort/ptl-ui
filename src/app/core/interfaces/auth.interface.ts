@@ -6,9 +6,10 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   access_token: string;
-  refresh_token?: string;
+  refresh_token: string;
   token_type: string;
   expires_in: string;
+  refresh_expires_in: string;
   perfil: string;
   nome: string;
 }
