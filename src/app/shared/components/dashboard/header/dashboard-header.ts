@@ -55,22 +55,5 @@ export class DashboardHeader {
     console.log('Navigate to settings');
   }
 
-  // Métodos de teste para refresh token - APENAS para desenvolvimento
-  protected testTokenInfo(): void {
-    const info = (this.authService as any).getTokenInfo();
-    console.log('🔍 Token Info:', info);
-  }
 
-  protected testShortExpiry(): void {
-    (this.authService as any).setShortExpiryForTesting();
-    console.log('⏰ Token expiry set to 2 minutes for testing');
-  }
-
-  protected testRefreshNow(): void {
-    console.log('🔄 Manual token refresh test...');
-    (this.authService as any).checkAndRefreshToken().subscribe({
-      next: () => console.log('✅ Manual refresh successful'),
-      error: (err: any) => console.error('❌ Manual refresh failed:', err)
-    });
-  }
 }
