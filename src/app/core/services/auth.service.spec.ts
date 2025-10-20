@@ -49,7 +49,7 @@ describe('AuthService', () => {
     // Limpar localStorage e estado do service antes de cada teste
     localStorage.clear();
     service.logout(); // Garantir que o serviço não está autenticado
-    
+
     // Clear any existing timers
     if (service['refreshTimer']) {
       service['refreshTimer'].unsubscribe();
@@ -61,7 +61,7 @@ describe('AuthService', () => {
     if (service['refreshTimer']) {
       service['refreshTimer'].unsubscribe();
     }
-    
+
     // Handle any pending HTTP requests
     try {
       httpMock.verify();
@@ -85,7 +85,7 @@ describe('AuthService', () => {
         }
       });
     }
-    
+
     localStorage.clear();
   });
 
@@ -649,7 +649,7 @@ describe('AuthService', () => {
 
     it('should update auth state after successful refresh', () => {
       Object.defineProperty(environment, 'mockApi', { value: false, configurable: true });
-      
+
       service.refreshToken().subscribe(() => {
         expect(service.isAuthenticated()).toBeTrue();
         expect(service.getToken()).toBe('new_access_token');
@@ -672,7 +672,7 @@ describe('AuthService', () => {
       // Set token to expire in 2 minutes (near expiry)
       const nearExpiryTime = Date.now() + (2 * 60 * 1000);
       localStorage.setItem('token_expiry', nearExpiryTime.toString());
-      
+
       const isNear = service['isTokenNearExpiry']();
       expect(isNear).toBeTrue();
     });
@@ -681,7 +681,7 @@ describe('AuthService', () => {
       // Set token to expire in 10 minutes (not near expiry)
       const farExpiryTime = Date.now() + (10 * 60 * 1000);
       localStorage.setItem('token_expiry', farExpiryTime.toString());
-      
+
       const isNear = service['isTokenNearExpiry']();
       expect(isNear).toBeFalse();
     });
@@ -689,25 +689,25 @@ describe('AuthService', () => {
     it('should setup refresh timer correctly', fakeAsync(() => {
       const setupTimerSpy = spyOn(service as any, 'setupTokenRefreshTimer').and.callThrough();
       const clearTimerSpy = spyOn(service as any, 'clearRefreshTimer').and.callThrough();
-      
+
       // Call setupTokenRefreshTimer with 120 seconds (2 minutes)
       (service as any).setupTokenRefreshTimer(120);
-      
+
       expect(setupTimerSpy).toHaveBeenCalledWith(120);
       expect(clearTimerSpy).toHaveBeenCalled();
-      
+
       // Fast forward time but not to trigger
       tick(30000); // 30 seconds
-      
+
       // Timer should not have triggered refresh yet
       httpMock.expectNone(`${environment.apiUrl}/auth/refresh`);
     }));
 
     it('should clear refresh timer on logout', () => {
       const clearTimerSpy = spyOn(service as any, 'clearRefreshTimer').and.callThrough();
-      
+
       service.logout().subscribe();
-      
+
       expect(clearTimerSpy).toHaveBeenCalled();
       expect(localStorage.getItem('auth_token')).toBeNull();
       expect(localStorage.getItem('refresh_token')).toBeNull();
@@ -718,11 +718,11 @@ describe('AuthService', () => {
       // Setup authenticated state
       localStorage.setItem('auth_token', 'current_token');
       localStorage.setItem('refresh_token', 'refresh_token');
-      
+
       // Set token to expire soon
       const nearExpiryTime = Date.now() + (2 * 60 * 1000);
       localStorage.setItem('token_expiry', nearExpiryTime.toString());
-      
+
       service['updateAuthState']({
         isAuthenticated: true,
         user: mockUser,
@@ -782,10 +782,10 @@ describe('AuthService', () => {
 
       const expiryStr = localStorage.getItem('token_expiry');
       expect(expiryStr).toBeTruthy();
-      
+
       const expiryTime = parseInt(expiryStr!);
       const expectedTime = Date.now() + (2 * 60 * 1000); // 2 minutes
-      
+
       // Allow 1 second tolerance
       expect(Math.abs(expiryTime - expectedTime)).toBeLessThan(1000);
       expect(setupTimerSpy).toHaveBeenCalledWith(60);

@@ -97,8 +97,8 @@ describe('LogsAcessoComponent', () => {
     const messageServiceSpy = jasmine.createSpyObj('MessageService', ['add', 'clear']);
     const notificationServiceSpy = jasmine.createSpyObj('NotificationService', [
       'success',
-      'error', 
-      'warn', 
+      'error',
+      'warn',
       'info',
       'clear',
       'loading',

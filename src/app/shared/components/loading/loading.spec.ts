@@ -87,7 +87,7 @@ describe('LoadingComponent', () => {
 
       // Test that the component has the correct size input
       expect(component.size()).toBe('sm');
-      
+
       // Test that iconClass method returns the correct class
       expect(component['iconClass']()).toContain('sm');
     });
@@ -97,7 +97,7 @@ describe('LoadingComponent', () => {
 
       // Test that the component has the correct size input
       expect(component.size()).toBe('md');
-      
+
       // Test that iconClass method returns the correct class
       expect(component['iconClass']()).toContain('md');
     });
@@ -107,7 +107,7 @@ describe('LoadingComponent', () => {
 
       // Test that the component has the correct size input
       expect(component.size()).toBe('lg');
-      
+
       // Test that iconClass method returns the correct class
       expect(component['iconClass']()).toContain('lg');
     });
@@ -189,14 +189,14 @@ describe('LoadingComponent', () => {
       });
 
       const container = fixture.debugElement.query(By.css('.loading-container'));
-      
+
       // Test container classes
       expect(container.nativeElement.classList).toContain('minimal');
-      
+
       // Test component methods return correct classes
       expect(component['iconClass']()).toBe('loading-icon lg');
       expect(component['containerClass']()).toBe('minimal');
-      
+
       // Test that correct icon is rendered for circle type
       const circleIcon = fixture.debugElement.query(By.css('lucide-icon'));
       expect(circleIcon).toBeTruthy();
@@ -244,12 +244,12 @@ describe('LoadingComponent', () => {
       // Test container classes
       expect(container.nativeElement.classList).toContain('fullscreen');
       expect(container.nativeElement.classList).toContain('minimal');
-      
+
       // Test component state
       expect(component.type()).toBe('refresh');
       expect(component.size()).toBe('lg');
       expect(component.message()).toBe('Processing request...');
-      
+
       // Test rendered elements
       expect(icon).toBeTruthy();
       expect(message.nativeElement.textContent.trim()).toBe('Processing request...');
@@ -276,7 +276,7 @@ describe('LoadingComponent', () => {
       expect(component.type()).toBe('circle');
       expect(component.size()).toBe('lg');
       expect(component.message()).toBe('Almost done...');
-      
+
       // Test rendered elements
       expect(icon).toBeTruthy();
       expect(message.nativeElement.textContent.trim()).toBe('Almost done...');
@@ -307,7 +307,7 @@ describe('LoadingComponent', () => {
 
       const message = fixture.debugElement.query(By.css('.loading-message'));
       expect(message).toBeFalsy(); // Empty string should not render message element
-      
+
       // But container should still have correct aria-label
       const container = fixture.debugElement.query(By.css('.loading-container'));
       expect(container.nativeElement.getAttribute('aria-label')).toBe('Carregando...');
