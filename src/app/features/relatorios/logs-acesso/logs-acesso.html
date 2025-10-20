@@ -173,10 +173,10 @@
         <!-- Usuário -->
         <td>
           <div class="!flex !flex-col !gap-1">
-            <div class="!font-medium !text-surface-900 dark:!text-surface-100">{{ log.email }}</div>
+            <div class="!font-medium !text-surface-900 dark:!text-surface-400">{{ log.email }}</div>
             <div class="!text-sm !text-surface-600 dark:!text-surface-400">{{ log.nome }}</div>
             <span class="badge !self-start" [ngClass]="{
-                    'badge-admin': log.perfil === 'admin',
+                    'badge-admin': log.perfil === 'ADMIN',
                     'badge-user': log.perfil === 'user',
                     'badge-manager': log.perfil === 'manager'
                   }">

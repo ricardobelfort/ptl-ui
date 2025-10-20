@@ -121,7 +121,7 @@ export class LogsAcessoComponent implements OnInit {
 
   // Computed
   protected readonly currentUser = this.authService.user;
-  protected readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  protected readonly isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
 
   constructor() {
     // Inicializar formulário de filtros

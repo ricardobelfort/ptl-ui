@@ -63,7 +63,7 @@ export const adminGuard: CanActivateFn = () => {
 
   // Verifica se o usuário é admin
   const user = authService.user();
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== 'ADMIN') {
     router.navigate(['/home']);
     return false;
   }

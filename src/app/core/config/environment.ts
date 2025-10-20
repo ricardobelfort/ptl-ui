@@ -19,7 +19,7 @@ export const mockAuthData = {
     email: 'admin@ptl.com',
     password: '123456',
   },
-  
+
   // Resposta simulada de login bem-sucedido (formato normalizado)
   loginResponse: {
     access_token: 'mock_jwt_token_here',
@@ -30,7 +30,7 @@ export const mockAuthData = {
       id: '1',
       email: 'admin@ptl.com',
       name: 'Administrador',
-      role: 'admin',
+      role: 'ADMIN',
       avatar: 'https://via.placeholder.com/150',
     },
   },
@@ -41,7 +41,7 @@ export const mockAuthData = {
       id: '1',
       email: 'admin@ptl.com',
       name: 'Administrador',
-      role: 'admin',
+      role: 'ADMIN',
     },
     {
       id: '2',

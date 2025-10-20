@@ -53,7 +53,7 @@ export class DashboardSidebar {
 
   // Computed properties
   protected readonly currentUser = this.authService.user;
-  protected readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  protected readonly isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
 
   protected readonly navigationItems = computed<NavigationItem[]>(() => {
     const baseItems: NavigationItem[] = [
