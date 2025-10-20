@@ -1,15 +1,15 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, Subscription, throwError, timer } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment, mockAuthData } from '../config/environment';
 import { ApiError, AuthState, LoginRequest, LoginResponse, LoginResponseNormalized, User } from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
 
@@ -34,9 +34,22 @@ export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly USER_KEY = 'auth_user';
+  private readonly TOKEN_EXPIRY_KEY = 'token_expiry';
+
+  // Timer para renovação automática do token
+  private refreshTimer?: Subscription;
 
   constructor() {
     this.initializeAuth();
+
+    // Expor no window apenas em desenvolvimento para testes
+    if (!environment.production) {
+      (window as any).authService = this;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.clearRefreshTimer();
   }
 
   /**
@@ -45,10 +58,34 @@ export class AuthService {
   private initializeAuth(): void {
     const token = localStorage.getItem(this.TOKEN_KEY);
     const userStr = localStorage.getItem(this.USER_KEY);
+    const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
 
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr);
+
+        // Verifica se o token ainda é válido
+        if (expiryStr) {
+          const expiryTime = parseInt(expiryStr);
+          const now = Date.now();
+
+          if (now >= expiryTime) {
+            // Token expirado, tenta renovar
+            console.log('Token expired on initialization, attempting refresh...');
+            this.refreshToken().subscribe({
+              error: () => {
+                console.log('Refresh failed, clearing auth data');
+                this.clearAuthData();
+              }
+            });
+            return;
+          }
+
+          // Token ainda válido, configura timer
+          const remainingTime = Math.floor((expiryTime - now) / 1000);
+          this.setupTokenRefreshTimer(remainingTime);
+        }
+
         this.updateAuthState({
           isAuthenticated: true,
           user,
@@ -89,6 +126,7 @@ export class AuthService {
   private normalizeLoginResponse(response: LoginResponse): LoginResponseNormalized {
     return {
       access_token: response.access_token,
+      refresh_token: response.refresh_token,
       token_type: response.token_type,
       expires_in: this.parseExpiresIn(response.expires_in),
       user: {
@@ -147,6 +185,7 @@ export class AuthService {
    * Realiza logout do usuário (apenas local - sem chamada para API)
    */
   logout(): Observable<void> {
+    console.log('Logging out user...');
     // Logout é sempre local - limpa os dados e redireciona
     this.clearAuthData();
     this.router.navigate(['/login']);
@@ -164,17 +203,21 @@ export class AuthService {
     const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
 
     if (!refreshToken) {
+      console.log('No refresh token available');
       return throwError(() => new Error('No refresh token available'));
     }
 
+    console.log('Attempting to refresh token...');
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/refresh`, {
       refresh_token: refreshToken,
     }).pipe(
       map((response) => this.normalizeLoginResponse(response)),
       tap((normalizedResponse) => {
+        console.log('Token refreshed successfully');
         this.handleLoginSuccess(normalizedResponse, true);
       }),
       catchError((error) => {
+        console.error('Token refresh failed:', error);
         this.clearAuthData();
         this.router.navigate(['/login']);
         return this.handleAuthError(error);
@@ -216,16 +259,46 @@ export class AuthService {
   }
 
   /**
+   * Força a verificação e renovação do token se necessário
+   */
+  checkAndRefreshToken(): Observable<boolean> {
+    if (!this.isAuthenticated()) {
+      return throwError(() => new Error('User not authenticated'));
+    }
+
+    if (this.isTokenNearExpiry()) {
+      console.log('Token near expiry, refreshing...');
+      return this.refreshToken().pipe(
+        map(() => true),
+        catchError((error) => {
+          console.error('Token refresh failed:', error);
+          return throwError(() => error);
+        })
+      );
+    }
+
+    return new Observable(subscriber => {
+      subscriber.next(true);
+      subscriber.complete();
+    });
+  }
+
+  /**
    * Trata o sucesso do login
    */
   private handleLoginSuccess(response: LoginResponseNormalized, rememberMe = false): void {
-    const { access_token, refresh_token, user } = response;
+    const { access_token, refresh_token, user, expires_in } = response;
+
+    // Calcula quando o token expira (em milissegundos)
+    const expiryTime = Date.now() + (expires_in * 1000);
 
     // Salva no localStorage
     localStorage.setItem(this.TOKEN_KEY, access_token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
 
-    if (refresh_token && rememberMe) {
+    // Sempre salva o refresh_token se existir (necessário para renovação automática)
+    if (refresh_token) {
       localStorage.setItem(this.REFRESH_TOKEN_KEY, refresh_token);
     }
 
@@ -236,6 +309,9 @@ export class AuthService {
       token: access_token,
       isLoading: false,
     });
+
+    // Configura timer para renovação automática
+    this.setupTokenRefreshTimer(expires_in);
   }
 
   /**
@@ -321,6 +397,9 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
+
+    this.clearRefreshTimer();
 
     this.updateAuthState({
       isAuthenticated: false,
@@ -328,5 +407,95 @@ export class AuthService {
       token: null,
       isLoading: false,
     });
+  }
+
+  /**
+   * Configura timer para renovação automática do token
+   */
+  private setupTokenRefreshTimer(expiresInSeconds: number): void {
+    this.clearRefreshTimer();
+
+    // Renova o token 5 minutos antes de expirar (ou na metade do tempo se for menor que 10 minutos)
+    const refreshTime = expiresInSeconds > 600 ? expiresInSeconds - 300 : expiresInSeconds / 2;
+    const refreshTimeMs = refreshTime * 1000;
+
+    console.log(`Token refresh scheduled in ${refreshTime} seconds`);
+
+    this.refreshTimer = timer(refreshTimeMs).pipe(
+      switchMap(() => {
+        console.log('Auto-refreshing token...');
+        return this.refreshToken();
+      })
+    ).subscribe({
+      next: () => {
+        console.log('Token refreshed successfully');
+      },
+      error: (error) => {
+        console.error('Auto-refresh failed:', error);
+        // Se falhar, tenta fazer logout
+        this.logout().subscribe();
+      }
+    });
+  }
+
+  /**
+   * Limpa o timer de renovação
+   */
+  private clearRefreshTimer(): void {
+    if (this.refreshTimer) {
+      this.refreshTimer.unsubscribe();
+      this.refreshTimer = undefined;
+    }
+  }
+
+  /**
+   * Verifica se o token está próximo do vencimento
+   */
+  private isTokenNearExpiry(): boolean {
+    const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+    if (!expiryStr) return true;
+
+    const expiryTime = parseInt(expiryStr);
+    const now = Date.now();
+    const fiveMinutes = 5 * 60 * 1000; // 5 minutos em ms
+
+    return (expiryTime - now) < fiveMinutes;
+  }
+
+  /**
+   * Método de teste - define um token com tempo de expiração curto (2 minutos)
+   * APENAS para testes - remover em produção
+   */
+  public setShortExpiryForTesting(): void {
+    if (!environment.production) {
+      const shortExpiry = Date.now() + (2 * 60 * 1000); // 2 minutos
+      localStorage.setItem(this.TOKEN_EXPIRY_KEY, shortExpiry.toString());
+      console.log('🧪 Test mode: Token will expire in 2 minutes');
+
+      // Reconfigura o timer para 1 minuto (renova 1 min antes de expirar)
+      this.setupTokenRefreshTimer(60); // 60 segundos
+    }
+  }
+
+  /**
+   * Método de teste - mostra informações do token atual
+   * APENAS para testes - remover em produção  
+   */
+  public getTokenInfo(): any {
+    if (!environment.production) {
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+      const expiryStr = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+
+      return {
+        hasToken: !!token,
+        hasRefreshToken: !!refreshToken,
+        tokenLength: token?.length,
+        expiryTime: expiryStr ? new Date(parseInt(expiryStr)).toLocaleString() : null,
+        timeUntilExpiry: expiryStr ? Math.floor((parseInt(expiryStr) - Date.now()) / 1000) : null,
+        isNearExpiry: this.isTokenNearExpiry()
+      };
+    }
+    return null;
   }
 }

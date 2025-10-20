@@ -61,41 +61,37 @@
   <div class="quick-actions">
     <h2 class="section-title">Ações Rápidas</h2>
     <div class="actions-grid">
-      <p-button [text]="true"
-        styleClass="action-card !w-full !p-4 !h-auto !flex-col !items-start !text-left !border !border-gray-200 hover:!border-primary !rounded-lg !bg-white hover:!bg-primary-50">
+      <div class="action-card" (click)="onNewIntern()">
         <div class="action-icon">
           <lucide-icon [img]="UserPlus" size="24"></lucide-icon>
         </div>
         <h3 class="action-title">Novo Interno</h3>
         <p class="action-description">Cadastrar novo interno no sistema</p>
-      </p-button>
+      </div>
 
-      <p-button [text]="true"
-        styleClass="action-card !w-full !p-4 !h-auto !flex-col !items-start !text-left !border !border-gray-200 hover:!border-primary !rounded-lg !bg-white hover:!bg-primary-50">
+      <div class="action-card" (click)="onReports()">
         <div class="action-icon">
           <lucide-icon [img]="BarChart3" size="24"></lucide-icon>
         </div>
         <h3 class="action-title">Relatórios</h3>
         <p class="action-description">Gerar relatórios detalhados</p>
-      </p-button>
+      </div>
 
-      <p-button [text]="true"
-        styleClass="action-card !w-full !p-4 !h-auto !flex-col !items-start !text-left !border !border-gray-200 hover:!border-primary !rounded-lg !bg-white hover:!bg-primary-50">
+      <div class="action-card" (click)="onEditData()">
         <div class="action-icon">
           <lucide-icon [img]="Settings" size="24"></lucide-icon>
         </div>
         <h3 class="action-title">Editar Dados</h3>
         <p class="action-description">Atualizar informações dos internos</p>
-      </p-button>
+      </div>
 
-      <p-button [text]="true"
-        styleClass="action-card !w-full !p-4 !h-auto !flex-col !items-start !text-left !border !border-gray-200 hover:!border-primary !rounded-lg !bg-white hover:!bg-primary-50">
+      <div class="action-card" (click)="onSettings()">
         <div class="action-icon">
           <lucide-icon [img]="Settings" size="24"></lucide-icon>
         </div>
         <h3 class="action-title">Configurações</h3>
         <p class="action-description">Ajustar configurações do sistema</p>
-      </p-button>
+      </div>
     </div>
   </div>
 

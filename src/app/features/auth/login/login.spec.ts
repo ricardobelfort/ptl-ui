@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { ApiError, LoginRequest } from '../../../core/interfaces/auth.interface';
@@ -38,7 +39,8 @@ describe('Login Component', () => {
       imports: [Login, ReactiveFormsModule, LoadingComponent],
       providers: [
         { provide: AuthService, useValue: authSpy },
-        { provide: Router, useValue: routerSpyObj }
+        { provide: Router, useValue: routerSpyObj },
+        provideNoopAnimations()
       ]
     }).compileComponents();
 
@@ -258,13 +260,15 @@ describe('Login Component', () => {
     });
 
     it('should toggle password input type', () => {
-      const passwordInput = fixture.nativeElement.querySelector('input[type="password"]');
-      expect(passwordInput.type).toBe('password');
+      // The PrimeNG p-password component handles toggle internally
+      // We just need to test that our component state changes
+      expect(component['showPassword']()).toBeFalse();
 
       component['togglePasswordVisibility']();
-      fixture.detectChanges();
+      expect(component['showPassword']()).toBeTrue();
 
-      expect(passwordInput.type).toBe('text');
+      component['togglePasswordVisibility']();
+      expect(component['showPassword']()).toBeFalse();
     });
   });
 
@@ -401,9 +405,10 @@ describe('Login Component', () => {
       fixture.detectChanges();
 
       const loadingComponent = fixture.debugElement.query(By.css('app-loading'));
-      expect(loadingComponent.nativeElement.getAttribute('type')).toBe('spinner');
-      expect(loadingComponent.nativeElement.getAttribute('size')).toBe('sm');
-      expect(loadingComponent.nativeElement.hasAttribute('inline')).toBeTruthy();
+      expect(loadingComponent).toBeTruthy();
+      expect(loadingComponent.componentInstance.type()).toBe('spinner');
+      expect(loadingComponent.componentInstance.size()).toBe('sm');
+      expect(loadingComponent.componentInstance.inline()).toBe(true);
     });
 
     it('should disable submit button when loading', () => {

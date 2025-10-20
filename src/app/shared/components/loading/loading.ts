@@ -9,7 +9,11 @@ export type LoadingSize = 'sm' | 'md' | 'lg';
   standalone: true,
   imports: [LucideAngularModule],
   template: `
-    <div class="loading-container" [class]="containerClass()">
+    <div class="loading-container" 
+         [class]="containerClass()"
+         role="status" 
+         aria-live="polite" 
+         [attr.aria-label]="ariaLabel()">
       @switch (type()) {
         @case ('refresh') {
           <lucide-icon [img]="RefreshCw" [class]="iconClass() + ' animate-spin'"></lucide-icon>
@@ -199,5 +203,9 @@ export class LoadingComponent {
 
   protected dotsClass() {
     return `loading-dots ${this.size()}`;
+  }
+
+  protected ariaLabel() {
+    return this.message() || 'Carregando...';
   }
 }

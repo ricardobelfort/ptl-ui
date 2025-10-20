@@ -95,4 +95,27 @@ export class Home {
       { severity: 'warn', summary: 'Aviso', detail: 'Terceiro item precisa de atenção' }
     ]);
   }
+
+  /**
+   * Action handlers for quick action cards
+   */
+  protected onNewIntern(): void {
+    // TODO: Navigate to new intern form
+    console.log('Navigate to new intern form');
+  }
+
+  protected onReports(): void {
+    // TODO: Navigate to reports
+    console.log('Navigate to reports');
+  }
+
+  protected onEditData(): void {
+    // TODO: Navigate to edit data
+    console.log('Navigate to edit data');
+  }
+
+  protected onSettings(): void {
+    // TODO: Navigate to settings
+    console.log('Navigate to settings');
+  }
 }
